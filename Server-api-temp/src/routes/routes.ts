@@ -7,7 +7,7 @@ import { ObjectId } from 'mongodb';
 import { Station } from '../interface/station.interface';
 import { createFeedback, getAllFeedbacks } from '../controllers/feedback.controller';
 import { auth } from '../service/auth.service';
-import { auth_middleware } from '../middle/auth';
+import { admin_middleware, auth_middleware } from '../middle/auth';
 
 
 const router = express.Router();
