@@ -9,7 +9,7 @@ import FeedBack from "./FeedBack/page";
   const createAdminRoutes = (): RouteObject[] => [
     { path: "dashboard", element: <Dashboard  /> },
     { path: "mark-pin", element: <Table  /> },
-    { path: "feed-back", element: <FeedBack /> },
+    { path: "feedback", element: <FeedBack /> },
     { path: "summary", element: <Summary /> },
   ];
   
