@@ -1,7 +1,7 @@
 import express, { Request, Response } from "express";
 import { auth } from "../service/auth.service";
 import jwt from "jsonwebtoken";
-import { findUserById } from "../service/user.service";
+import { findTotalUsers, findUserById } from "../service/user.service";
 import { parseJwt } from "../service/auth.service";
 
 export const userRolecontroller = async function (req: Request, res: Response) {
@@ -20,4 +20,14 @@ export const userRolecontroller = async function (req: Request, res: Response) {
   
   const token_userinfo = jwt.sign({"email":user.email,"name":user.name,"role":user.role}, key);
   return res.status(200).send(token_userinfo);
+};
+
+export const getTotalUsers = async (req: Request, res: Response): Promise<void> => {
+  try {
+      const totalUsers = await findTotalUsers();
+      res.status(200).json({ totalUsers });
+  } catch (error) {
+      console.error('Error in getTotalUsers controller:', error);
+      res.status(500).json({ error: 'Internal Server Error' });
+  }
 };

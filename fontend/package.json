@@ -15,7 +15,7 @@
     "@leenguyen/react-flip-clock-countdown": "^1.6.0",
     "@mui/icons-material": "^5.16.7",
     "@mui/material": "^5.16.7",
-    "@mui/styles": "^5.16.7",
+    "@mui/styles": "^6.1.6",
     "@react-oauth/google": "^0.12.1",
     "@types/axios": "^0.14.0",
     "@types/js-cookie": "^3.0.6",

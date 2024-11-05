@@ -7,7 +7,8 @@ import { ObjectId } from 'mongodb';
 import { Station } from '../interface/station.interface';
 import { createFeedback, getAllFeedbacks } from '../controllers/feedback.controller';
 import { auth } from '../service/auth.service';
-import { auth_middleware } from '../middle/auth';
+import { admin_middleware, auth_middleware } from '../middle/auth';
+import { getTotalUsers } from '../controllers/user.controller';
 
 
 const router = express.Router();
@@ -70,7 +71,10 @@ router.get('/getPolyline', getPolylines);
 
 //feedback
 router.post('/createFeedback',auth_middleware ,createFeedback);
-router.get('/getFeedback', auth_middleware ,getAllFeedbacks)
+router.get('/getFeedback', auth_middleware ,getAllFeedbacks);
+
+//user
+router.get('/getTotalUsers',admin_middleware, getTotalUsers);
 
 
 export default router;

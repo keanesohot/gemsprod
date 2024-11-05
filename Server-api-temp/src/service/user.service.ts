@@ -88,3 +88,13 @@ export const findUserById = async (objectId:string)=>{
         throw error;
     }
 }
+
+export const findTotalUsers = async (): Promise<number> => {
+    try {
+        const totalUsers = await User.countDocuments();
+        return totalUsers;
+    } catch (error) {
+        console.error('Error finding total users:', error);
+        throw error;
+    }
+};
