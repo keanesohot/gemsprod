@@ -12,7 +12,13 @@
     ## for decrypt token     
     TOKEN_KEY 
     ## for define superadmin     
-    SUPERADMIN 
+    SUPERADMIN
+    ## for define front end url 
+    FONTENDURL
+    ## for define websocket key 
+    WEBSOCKETKEY
+    ## for define bearer token
+    BEARER_TOKEN
 
 # DON'T EDIT ON SERVER 
 # this is resource of database
