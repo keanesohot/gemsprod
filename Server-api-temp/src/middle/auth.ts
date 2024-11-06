@@ -28,7 +28,7 @@ export const auth_middleware = async (
 export const admin_middleware = async function (req: Request,
   res: Response,
   next: () => void) {
-    const key = process.env.FONTENDURL || "kimandfamily";
+    const key = process.env.TOKEN_KEY || "kimandfamily";
     const token = req.header("x-auth-token");
     if (!token)
       return res.status(401).json({ msg: "No auth token, access denied" });
@@ -41,7 +41,7 @@ export const admin_middleware = async function (req: Request,
         .json({ msg: "Token verification failed, authorization denied." });
 
       const checkedadmin = await findUserById(extractToken.id);
-    if (checkedadmin?.role !== "admin") 
+    if (checkedadmin?.role !== "ADMIN") 
         return res
           .status(401)
           .json({ msg: "You are not admin." });

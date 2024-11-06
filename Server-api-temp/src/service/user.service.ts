@@ -1,9 +1,11 @@
 import User from "../models/users.model";
 import jwt from 'jsonwebtoken';
 import RoleModel from '../models/roles.model'; // Adjust the path as per your file structure
-import { interface_User } from "../interface/user.interface";
+import { interface_editUser, interface_User } from "../interface/user.interface";
 
-export const regis_user = async (payload:interface_User)=>{
+export const regis_user:{
+    (payload:interface_User):Promise<{token:string,newUser:boolean}>
+} = async (payload:interface_User)=>{
     try {
         const key = process.env.TOKEN_KEY || "kimandfamily";
         // find user in database
@@ -25,7 +27,7 @@ export const regis_user = async (payload:interface_User)=>{
     
           console.log("New user created:", newuser);
            token = jwt.sign({ id: newuser._id }, key);
-          return token;
+          return {'token':token,'newUser':true};
         }
     
         if (user.role === undefined || user.role === null ) {
@@ -34,12 +36,14 @@ export const regis_user = async (payload:interface_User)=>{
 
          token = jwt.sign({ id: user._id }, key);
 
-         return token;
+         return {'token':token,'newUser':false};;
     } catch (error) {
         console.error('Error adding user:', error);
         throw error;
     }
 } 
+
+
 
 export const addRole = async (roleName: string) => {
     try {
@@ -85,6 +89,91 @@ export const findUserById = async (objectId:string)=>{
         return user
     } catch (error) {
         console.error('Error finding user:', error);
+        throw error;
+    }
+}
+
+export const findAllUser = async (role:string)=>{
+    try {
+        const users = await User.find({role:role});
+        if (!users) {
+            throw new Error('User not found');
+        }
+        return users;
+    }catch (error) {
+        console.error('Error finding user:', error);
+        throw error;
+    }
+}
+
+export const editUser:{(payload:interface_editUser):Promise<{message:string,success:boolean}>} = async (payload:interface_editUser)=>{
+    try {
+        let message = "";
+        let success = false;
+        if (!payload.id||payload.id==="") {
+            throw new Error('ObjectId is required');
+        }
+        console.log("Payload:", payload.id);
+        const user = await User.findById(payload.id);
+        const existingRole = await RoleModel.findOne({ Role: payload.role });  
+        if (!existingRole) {
+            throw new Error('Role not found');
+        } 
+        if (!user) {
+            throw new Error('User not found');
+        }
+        // edit all fields
+        if (payload.name && payload.role && payload.email) {
+            user.name = payload.name;
+            user.email = payload.email;
+            user.role = payload.role;
+            await user.save();
+            message = `User ${payload.email} updated successfully`;
+            success = true;
+        }
+        // edit two fields 
+        else if (payload.name && payload.email && !payload.role) {
+            user.name = payload.name;
+            user.email = payload.email;
+            await user.save();
+            message = `User ${payload.email} updated successfully`;
+            success = true;
+        } else if (payload.role && payload.email && !payload.name) {
+            user.role = payload.role;
+            user.email = payload.email;
+            await user.save();
+            message = `User ${payload.email} updated successfully`;
+            success = true;
+        } else if (payload.role && payload.name && !payload.email) {
+            user.role = payload.role;
+            user.name = payload.name;
+            await user.save();
+            message = `User ${payload.email} updated successfully`;
+            success = true;
+        }
+        // edit one field
+        else if (payload.email && !payload.name && !payload.role) {
+            user.email = payload.email;
+            await user.save();
+            message = `User ${user.email} updated successfully`;
+            success = true;
+        } else if (payload.name && !payload.role && !payload.email) {
+            user.name = payload.name;
+            await user.save();
+            message = `User ${payload.email} updated successfully`;
+            success = true;
+        } else if (payload.role && !payload.name && !payload.email) {
+            user.role = payload.role;
+            await user.save();
+            message = `User ${payload.email} updated successfully`;
+            success = true;
+        } else {
+            message = `No changes made to user ${payload.email}`;
+            success = false;
+        }
+        return {message,success};
+    } catch (error) {
+        console.error(error);
         throw error;
     }
 }

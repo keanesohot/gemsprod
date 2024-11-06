@@ -3,12 +3,13 @@ import Table from "./Table/Table";
 import Summary from "./Summary/schedule";
 import { RouteObject } from "react-router-dom";
 import FeedBack from "./FeedBack/page";
-
+import Addstaff from './Addstaff/Addstaff';
   
   // ? use this function to create admin routes
   const createAdminRoutes = (): RouteObject[] => [
     { path: "dashboard", element: <Dashboard  /> },
     { path: "mark-pin", element: <Table  /> },
+    { path: "addstaff", element: <Addstaff  /> },
     { path: "feedback", element: <FeedBack /> },
     { path: "summary", element: <Summary /> },
   ];

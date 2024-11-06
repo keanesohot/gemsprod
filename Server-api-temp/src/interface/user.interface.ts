@@ -3,3 +3,9 @@ export interface interface_User  {
     name:string,
     role:string
   } 
+export interface interface_editUser  {
+    id:string,
+    email:string,
+    name?:string,
+    role?:string
+  } 

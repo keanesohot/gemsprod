@@ -18,6 +18,6 @@ export const auth_controller = async (req:Request,res:Response)=>{
         role:role
     };
     
-    const token = await regis_user(user);
+    const {token,newUser} = await regis_user(user);
     res.status(200).send(token);
 }

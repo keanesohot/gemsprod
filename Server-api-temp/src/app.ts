@@ -9,7 +9,7 @@ import cors from "cors";
 import cron from "node-cron";
 import { cleanStationWaitingLists } from "./service/cleanStation";
 import { setupWebSocket } from "./websocket";
-
+import userroute from "./routes/adminfuncroutes";
 
 dotenv.config();
 const app = express();
@@ -43,7 +43,7 @@ mongoose
 app.use(logger);
 app.use("/", router);
 app.use("/users", authroute);
-
+app.use("/adminfunc",userroute);
 const PORT = process.env.PORT || 4444;
 
 // Create HTTP server
