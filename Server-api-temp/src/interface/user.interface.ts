@@ -5,7 +5,7 @@ export interface interface_User  {
   } 
 export interface interface_editUser  {
     id:string,
-    email:string,
+    email?:string,
     name?:string,
     role?:string
   } 

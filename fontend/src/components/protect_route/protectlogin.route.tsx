@@ -46,6 +46,8 @@ const ProtectloginRoute: React.FC<ProtectRouteProps> = ({ children = []}) => {
   if (isAuthen && userRole) {
     if (userRole.role === 'ADMIN') {
       return <Navigate to="/admin/dashboard" replace />;
+    }else if (userRole.role === 'STAFF'){
+      return <Navigate to="/staff/dashboard"/>
     }
     return <Navigate to="/map" replace />;
   }else{

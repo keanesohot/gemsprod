@@ -4,6 +4,7 @@ import jwt from "jsonwebtoken";
 import { editUser, findAllUser, findUserById, regis_user } from "../service/user.service";
 import { parseJwt } from "../service/auth.service";
 import { interface_editUser, interface_User } from "../interface/user.interface";
+import { Types } from "mongoose";
 
 export const userRolecontroller = async function (req: Request, res: Response) {
   const token = req.header("x-auth-token");
@@ -24,13 +25,18 @@ export const userRolecontroller = async function (req: Request, res: Response) {
 };
 
 export const addStaffcontroller = async function (req: Request, res: Response) {
-  const body:{email:string,name:string,role:string} = req.body;
+  const body:{email:string,name:string,role:string,id:string} = req.body;
   body.role = "STAFF";
-  const {token,newUser} = await regis_user(body);
+  const {token,newUser,id} = await regis_user(body);
   if (newUser) {
-    return res.status(200).send(token);
+    return res.status(200).send(`Added ${body.email} as STAFF`);
   }
-  return res.status(400).send('User already exist');
+  body.id = id;
+  const {message,success} = await editUser({id:body.id,role:body.role});
+  if (success) {
+    return res.status(200).send(`Chaged ${body.email} role to STAFF`);
+  }
+  return res.status(400).send(message);
 }
 
 export const getStaffcontroller = async function (req: Request, res: Response) {

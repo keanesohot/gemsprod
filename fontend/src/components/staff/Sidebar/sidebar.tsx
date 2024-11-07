@@ -28,7 +28,6 @@ const Sidebar: React.FC<{ userInfo: User | null }> = ({ userInfo }) => {
   const secondary = userInfo
     ? userInfo.email || "admin@email.com"
     : "admin@email.com";
-  console.log('role',userInfo?.role);
   const handleLogout = async () => {
     const { isConfirmed } = await Swal.fire({
       title: "ออกจากระบบ!",
@@ -71,8 +70,6 @@ const Sidebar: React.FC<{ userInfo: User | null }> = ({ userInfo }) => {
       text: "Mark Pin",
       icon: "add_location",
     },
-    { text: "FeedBack", icon: "feedback" },
-    { text: "Summary", icon: "directions_bus" },
   ];
   return (
     <Box sx={{ display: "flex" }}>
@@ -103,13 +100,13 @@ const Sidebar: React.FC<{ userInfo: User | null }> = ({ userInfo }) => {
               >
                 <Avatar src="path-to-avatar.jpg" />
               </ListItemAvatar>
-              {isOpen && <ListItemText primary='ADMIN' secondary={secondary} />}
+              {isOpen && <ListItemText primary='STAFF' secondary={secondary} />}
             </ListItem>
             <Divider />
             {data.map(({text,icon}) => (
               <NavLink
                 key={text}
-                to={`/admin/${text.toLowerCase().replace(" ", "-")}`}
+                to={`/staff/${text.toLowerCase().replace(" ", "-")}`}
                 style={({ isActive }) => ({
                   textDecoration: "none",
                   color: isActive ? "#8B090C" : "#945d5e",

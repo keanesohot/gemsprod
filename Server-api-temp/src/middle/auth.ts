@@ -48,4 +48,27 @@ export const admin_middleware = async function (req: Request,
     
     next();
 }
+export const staff_middleware = async function (req: Request,
+  res: Response,
+  next: () => void) {
+    const key = process.env.TOKEN_KEY || "kimandfamily";
+    const token = req.header("x-auth-token");
+    if (!token)
+      return res.status(401).json({ msg: "No auth token, access denied" });
+    
+    const extractToken = parseJwt(token);
+    const verified = jwt.verify(token, key);
+    if (!verified)
+      return res
+        .status(401)
+        .json({ msg: "Token verification failed, authorization denied." });
+
+      const checkedadmin = await findUserById(extractToken.id);
+    if (checkedadmin?.role !== "ADMIN" && checkedadmin?.role !== "STAFF") 
+        return res
+          .status(401)
+          .json({ msg: "You are not admin or staff." });
+    
+    next();
+}
 

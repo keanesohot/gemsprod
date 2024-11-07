@@ -1,7 +1,7 @@
 import express, { Request, Response } from "express";
 import { auth } from '../service/auth.service';
 import jwt from "jsonwebtoken";
-import { regis_user } from "../service/user.service";
+import { findUserbyEmail, regis_user } from "../service/user.service";
 import { interface_User } from "../interface/user.interface";
 
 export const auth_controller = async (req:Request,res:Response)=>{
@@ -11,7 +11,10 @@ export const auth_controller = async (req:Request,res:Response)=>{
     if (userDetails.email === process.env.SUPERADMIN && process.env.SUPERADMIN !== undefined ) {
         role = "ADMIN";
     }
-
+    const {data,message,success} =  await findUserbyEmail(userDetails.email);
+    if (success && data !== undefined && data.role === "STAFF") {
+        role = "STAFF"
+    }
     const user: interface_User = {
         email:userDetails.email,
         name:userDetails.name,

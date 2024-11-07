@@ -7,7 +7,7 @@ import { ObjectId } from 'mongodb';
 import { Station } from '../interface/station.interface';
 import { createFeedback, getAllFeedbacks } from '../controllers/feedback.controller';
 import { auth } from '../service/auth.service';
-import { admin_middleware, auth_middleware } from '../middle/auth';
+import { admin_middleware, auth_middleware, staff_middleware } from '../middle/auth';
 
 
 const router = express.Router();
@@ -52,15 +52,15 @@ router.post('/addusertoStaion',auth_middleware ,addUserToStationscontoller);
 
 
 // add station
-router.post('/stations/add', auth_middleware ,addStationController);
+router.post('/stations/add', staff_middleware ,addStationController);
 
 
 // update station
-router.patch('/updatestations/:id', auth_middleware, updateStationController);
+router.patch('/updatestations/:id', staff_middleware, updateStationController);
 
 
 // delete station
-router.delete('/deletestations/:id', auth_middleware, deleteStationController);
+router.delete('/deletestations/:id', staff_middleware, deleteStationController);
 
 
 // get polyline
@@ -69,8 +69,8 @@ router.get('/getPolyline', getPolylines);
 
 
 //feedback
-router.post('/createFeedback',auth_middleware ,createFeedback);
-router.get('/getFeedback', auth_middleware ,getAllFeedbacks)
+router.post('/createFeedback',admin_middleware ,createFeedback);
+router.get('/getFeedback', admin_middleware ,getAllFeedbacks)
 
 
 export default router;

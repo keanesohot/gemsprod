@@ -8,11 +8,12 @@ import ProtectloginRoute from "./components/protect_route/protectlogin.route";
 import createAdminRoutes from "./components/admin/pages";
 import Adminlayout from "./layout/admin.layout";
 import BrowserDetector from "./components/checkBrowser/browserDetector";
-
+import createStaffRoutes from './components/staff/index';
+import Stafflaout from "./layout/staff.layout";
 
 function App() {
   const adminRoutes = createAdminRoutes();
-
+  const staffRoutes = createStaffRoutes();
   return (
     <BrowserRouter>
       <BrowserDetector /> 
@@ -28,12 +29,22 @@ function App() {
         <Route
           path="/map"
           element={
-            <ProtectmapRoute requireRoles={["ADMIN", "USER"]}>
+            <ProtectmapRoute requireRoles={["ADMIN", "USER","STAFF"]}>
               <Map />
             </ProtectmapRoute>
           }
         ></Route>
-
+        <Route
+          path="/staff/*"
+          element={
+            <ProtectmapRoute requireRoles={["STAFF"]}>
+              <Stafflaout />
+            </ProtectmapRoute>
+          }>
+          {staffRoutes.map((route, index) => (
+            <Route key={index} path={route.path} element={route.element} />
+          ))}
+          </Route>
         <Route
           path="/admin/*"
           element={

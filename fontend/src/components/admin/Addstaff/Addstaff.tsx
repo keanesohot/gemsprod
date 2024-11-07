@@ -162,15 +162,20 @@ const Addstaff: React.FC = () => {
 
     try {
       console.log("Adding station with data:", formData); // Debugging
-      await axios.post(`${API}/adminfunc/addstaff`, formData, {
+      const res =  await axios.post(`${API}/adminfunc/addstaff`, formData, {
         headers: { "x-auth-token": cookie.token },
       });
+      console.log("Data",res.data);
+      if (res.status !== 200) {
+        throw new Error(res.data);
+      }
       // Fetch updated data from the server to reflect changes
       await fetchData();
       handleAddClose();
     } catch (error) {
-      console.error("Failed to add station", error); // Debugging
-      setError("Failed to add station");
+      console.error("Failed to add staff", error); // Debugging
+      // setError("Failed to add staff");
+      alert(`Failed to add staff : ${error}`);
     }
   };
 
@@ -195,6 +200,7 @@ const Addstaff: React.FC = () => {
     } catch (error) {
       console.error("Failed to update Staff", error); // Debugging
       setError("Failed to update staff");
+      await fetchData();
     }
   };
 

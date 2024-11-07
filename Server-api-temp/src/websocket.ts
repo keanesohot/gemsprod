@@ -74,7 +74,7 @@ export const setupWebSocket = (server: any) => {
     if (pathname === "/busws") {
       handleBusWsConnection(ws);
     } else if (pathname === "/stationws") {
-      if (ws.roles === "ADMIN") {
+      if (ws.roles === "ADMIN" || ws.roles==="STAFF") {
         handleStationWsConnection(ws);
       } else {
         ws.close(1008, "Forbidden: Admins only");

@@ -34,6 +34,9 @@ const Login:React.FC<{}> = () => {
       case "ADMIN":
         navigate("/admin/dashboard", { replace: true });
         break;
+      case "STAFF":
+        navigate("/staff/dashboard", { replace: true })
+        break;
       default:
         break;
     }

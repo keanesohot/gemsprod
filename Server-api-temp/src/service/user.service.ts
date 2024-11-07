@@ -2,15 +2,16 @@ import User from "../models/users.model";
 import jwt from 'jsonwebtoken';
 import RoleModel from '../models/roles.model'; // Adjust the path as per your file structure
 import { interface_editUser, interface_User } from "../interface/user.interface";
+import { Types } from "mongoose";
 
 export const regis_user:{
-    (payload:interface_User):Promise<{token:string,newUser:boolean}>
+    (payload:interface_User):Promise<{token:string,newUser:boolean,id:string}>
 } = async (payload:interface_User)=>{
     try {
         const key = process.env.TOKEN_KEY || "kimandfamily";
         // find user in database
         const user = await User.findOne({ email: payload.email });
-        console.log("User found:", user);
+        // console.log("User found:", user);
 
         let token = "";
         // add role
@@ -27,7 +28,7 @@ export const regis_user:{
     
           console.log("New user created:", newuser);
            token = jwt.sign({ id: newuser._id }, key);
-          return {'token':token,'newUser':true};
+          return {'token':token,'newUser':true,'id':`${newuser._id}`};
         }
     
         if (user.role === undefined || user.role === null ) {
@@ -36,7 +37,7 @@ export const regis_user:{
 
          token = jwt.sign({ id: user._id }, key);
 
-         return {'token':token,'newUser':false};;
+         return {'token':token,'newUser':false,'id':`${user._id}`};;
     } catch (error) {
         console.error('Error adding user:', error);
         throw error;
@@ -93,6 +94,19 @@ export const findUserById = async (objectId:string)=>{
     }
 }
 
+export const findUserbyEmail = async (email:string)=>{
+    try {
+        const user = await User.findOne({email:email});
+        if (!user) {
+            return {"user":user,"message":"User not found","success":false};
+        }
+        return {"data":user,"message":"User found","success":true};
+    }catch (error) {
+        console.error('Error finding user:', error);
+        throw error;
+    }
+}
+
 export const findAllUser = async (role:string)=>{
     try {
         const users = await User.find({role:role});
@@ -113,14 +127,23 @@ export const editUser:{(payload:interface_editUser):Promise<{message:string,succ
         if (!payload.id||payload.id==="") {
             throw new Error('ObjectId is required');
         }
-        console.log("Payload:", payload.id);
+        // console.log("Payload:", payload.id);
         const user = await User.findById(payload.id);
         const existingRole = await RoleModel.findOne({ Role: payload.role });  
+        const checkemail = await User.find({email:payload.email});
+        const SUPERADMIN = process.env.SUPERADMIN || "khumnoiw@gmail.com";
         if (!existingRole) {
             throw new Error('Role not found');
         } 
         if (!user) {
             throw new Error('User not found');
+        }
+        if (user.email === SUPERADMIN) {
+            return {message:"Cannot edit admin",success:false};
+            
+        }
+        if (checkemail.length > 0) {
+            return {message:"Email already exists",success:false};
         }
         // edit all fields
         if (payload.name && payload.role && payload.email) {
