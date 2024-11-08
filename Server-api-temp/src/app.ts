@@ -43,6 +43,7 @@ mongoose
 app.use(logger);
 app.use("/", router);
 app.use("/users", authroute);
+app.use("/guests", authroute);
 
 const PORT = process.env.PORT || 4444;
 

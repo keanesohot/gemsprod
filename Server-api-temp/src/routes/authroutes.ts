@@ -11,6 +11,8 @@ import jwt from "jsonwebtoken";
 import { admin_middleware, auth_middleware } from '../middle/auth';
 import { auth_controller } from "../controllers/auth.controllers";
 import { userRolecontroller } from "../controllers/user.controller";
+import { auth } from "../service/auth.service";
+import { createGuest, guestRoleController } from "../controllers/guest.controllers";
 const authroute = express.Router();
 const { OAuth2Client } = require("google-auth-library");
 
@@ -33,6 +35,9 @@ CustomRequest, res:Response) => {
 });
 
 authroute.get("/getUser",auth_middleware,userRolecontroller);
+
+authroute.post("/createGuest", createGuest);
+authroute.get("/getGuest", guestRoleController);
 
 authroute.get("/testip", (req, res) => {
   const ipAddress = IP.address();

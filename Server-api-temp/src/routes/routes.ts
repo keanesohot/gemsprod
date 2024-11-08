@@ -8,6 +8,9 @@ import { Station } from '../interface/station.interface';
 import { createFeedback, getAllFeedbacks } from '../controllers/feedback.controller';
 import { auth } from '../service/auth.service';
 import { auth_middleware } from '../middle/auth';
+import { createGuest, getGuestByIdController, getGuests, guestRoleController } from '../controllers/guest.controllers';
+import { findGuestById, getGuestById } from '../service/guest.service';
+import { get } from 'http';
 
 
 const router = express.Router();
@@ -44,6 +47,11 @@ router.get("/", async (req: Request, res: Response) => {
     console.log("Error something" + err)
   }
 });
+
+// guest
+router.post("/createGuest", createGuest);
+router.get("/getGuests", getGuests);
+router.get("/getGuest/:id", getGuestByIdController);
 
 
 // station
