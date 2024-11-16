@@ -2,6 +2,9 @@ import User from "../models/users.model";
 import jwt from 'jsonwebtoken';
 import RoleModel from '../models/roles.model'; // Adjust the path as per your file structure
 import { interface_User } from "../interface/user.interface";
+import Activity from "../models/activity_model";
+import Station from "../models/station_model";
+import mongoose from "mongoose";
 
 export const regis_user = async (payload:interface_User)=>{
     try {
@@ -98,3 +101,51 @@ export const findTotalUsers = async (): Promise<number> => {
         throw error;
     }
 };
+
+
+
+
+// adctivity service
+export const addActivityBasedOnWaitingList = async (
+    activityData: {
+      email: string;
+      location: string;
+      stationMarker: string;
+      time: string;
+      route: string;
+      destinationMarker: string;
+    },
+    stationId: string
+  ) => {
+    try {
+      // Find the station and check the waiting list
+      const station = await Station.findById(stationId);
+      if (!station) {
+        return { status: "Error", message: "Station not found." };
+      }
+  
+      const userInWaitingList = station.waiting?.some(
+        (waitingUser) => waitingUser.email === activityData.email
+      );
+  
+      if (userInWaitingList) {
+        return {
+          status: "Success",
+          message: "User is already in the waiting list. No activity added.",
+        };
+      }
+  
+      // If the user is not in the waiting list, create the activity
+      const newActivity = new Activity(activityData);
+      await newActivity.save();
+  
+      return {
+        status: "Success",
+        message: "Activity added successfully.",
+        data: newActivity,
+      };
+    } catch (error) {
+      console.error("Error in addActivityBasedOnWaitingList service:", error);
+      throw new Error("Error processing activity.");
+    }
+  };
