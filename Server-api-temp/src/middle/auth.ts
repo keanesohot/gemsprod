@@ -41,7 +41,7 @@ export const admin_middleware = async function (req: Request,
         .json({ msg: "Token verification failed, authorization denied." });
 
       const checkedadmin = await findUserById(extractToken.id);
-    if (checkedadmin?.role !== "admin") 
+    if (checkedadmin?.role !== "ADMIN") 
         return res
           .status(401)
           .json({ msg: "You are not admin." });

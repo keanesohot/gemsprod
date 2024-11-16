@@ -1,5 +1,5 @@
 import express, { Request, Response } from "express";
-import { regis_guest, findGuestById, getAllGuests, getGuestById } from "../service/guest.service";
+import { regis_guest, findGuestById, getAllGuests, getGuestById, logGuestActivity } from "../service/guest.service";
 import jwt from "jsonwebtoken";
 
 export const createGuest = async function (req: Request, res: Response){
@@ -52,3 +52,18 @@ export const getGuestByIdController = async function (req: Request, res: Respons
         res.status(500).json({ error: "Internal server error" });
     }
 }
+
+export const logGuestActivityController = async (req: Request, res: Response): Promise<void> => {
+    const { name, location, stationMarker, time, route, destinationMarker } = req.body;
+    try {
+        const result = await logGuestActivity({ name, location, stationMarker, time, route, destinationMarker });
+        if (result.status === "Success") {
+            res.status(201).json({ message: result.message, data: result.data });
+        } else {
+            res.status(400).json({ message: result.message });
+        }
+    } catch (error) {
+        console.error("Error in logGuestActivityController:", error);
+        res.status(500).json({ message: "Internal server error" });
+    }
+};
