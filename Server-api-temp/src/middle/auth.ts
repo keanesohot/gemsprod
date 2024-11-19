@@ -33,14 +33,14 @@ export const admin_middleware = async function (req: Request,
     if (!token)
       return res.status(401).json({ msg: "No auth token, access denied" });
     
-    const extractToken = parseJwt(token);
     const verified = jwt.verify(token, key);
     if (!verified)
       return res
-        .status(401)
-        .json({ msg: "Token verification failed, authorization denied." });
-
-      const checkedadmin = await findUserById(extractToken.id);
+    .status(401)
+    .json({ msg: "Token verification failed, authorization denied." });
+    
+    const extractToken = await parseJwt(token);
+    const checkedadmin = await findUserById(extractToken.id);
     if (checkedadmin?.role !== "ADMIN") 
         return res
           .status(401)
@@ -56,14 +56,14 @@ export const staff_middleware = async function (req: Request,
     if (!token)
       return res.status(401).json({ msg: "No auth token, access denied" });
     
-    const extractToken = parseJwt(token);
     const verified = jwt.verify(token, key);
     if (!verified)
       return res
-        .status(401)
-        .json({ msg: "Token verification failed, authorization denied." });
-
-      const checkedadmin = await findUserById(extractToken.id);
+    .status(401)
+    .json({ msg: "Token verification failed, authorization denied." });
+    
+    const extractToken = await parseJwt(token);
+    const checkedadmin = await findUserById(extractToken.id);
     if (checkedadmin?.role !== "ADMIN" && checkedadmin?.role !== "STAFF") 
         return res
           .status(401)
