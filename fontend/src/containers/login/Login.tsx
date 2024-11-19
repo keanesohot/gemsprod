@@ -40,3 +40,18 @@ export const getUserinfo = async function (token?:string) {
     }
 
 }
+
+export const sendGuest = async (name:string) => {
+    try {
+        const response = await axios.post(
+            `${VITE_API}/users/createGuest`,
+            {
+              name: name,
+            },
+            {headers:{"Access-Control-Allow-Origin":"*"}}
+        );
+        return response.data;
+    } catch (error) {
+        console.error("Failed to send code to backend:", error);
+    }
+}

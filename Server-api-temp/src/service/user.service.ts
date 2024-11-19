@@ -91,7 +91,7 @@ export const findRoleByName = async (roleName: string) => {
 export const findUserById = async (objectId:string)=>{
     try {
         const key = process.env.TOKEN_KEY || "kimandfamily";
-        const user = await User.findById(objectId).populate('role');
+        const user = await User.findById(objectId);
         if (!user) {
             throw new Error('User not found');
         }

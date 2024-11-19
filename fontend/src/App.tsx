@@ -29,7 +29,7 @@ function App() {
         <Route
           path="/map"
           element={
-            <ProtectmapRoute requireRoles={["ADMIN", "USER","STAFF"]}>
+            <ProtectmapRoute requireRoles={["ADMIN", "USER","STAFF","guest"]}>
               <Map />
             </ProtectmapRoute>
           }

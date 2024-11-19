@@ -3,6 +3,7 @@ import { auth } from '../service/auth.service';
 import jwt from "jsonwebtoken";
 import { findUserbyEmail, regis_user } from "../service/user.service";
 import { interface_User } from "../interface/user.interface";
+import RoleModel from "../models/roles.model";
 
 export const auth_controller = async (req:Request,res:Response)=>{
     const { code } = req.body;

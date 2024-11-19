@@ -8,7 +8,10 @@ import { useGoogleLogin } from "@react-oauth/google";
 import React, { useState } from "react";
 import Loading from '../loading/loading';
 import Cookies from 'js-cookie';
-
+// import {
+//   Icon
+// } from "@mui/material";
+// import Swal from "sweetalert2";
 const Login:React.FC<{}> = () => {
   // const [, setCookie] = useCookies(["token"]);
   const navigate = useNavigate();
@@ -50,6 +53,44 @@ const Login:React.FC<{}> = () => {
     flow: "auth-code",
   });
 
+  // const login_guest = async () => {
+  //   await Swal.fire({
+  //     title: "Guest Login",
+  //     input: "text",
+  //     inputLabel: "Enter your name",
+  //     showCancelButton: true,
+  //     confirmButtonText: "Login",
+  //     cancelButtonText: "Cancel",
+  //     cancelButtonColor: "#e2b644",
+  //     confirmButtonColor: "#8b090c",
+  //     background: "#f9f4d4",
+  //     reverseButtons: true,
+  //     showClass: {
+  //       popup: `
+  //         animate__animated
+  //         animate__fadeInUp
+  //         animate__faster
+  //       `,
+  //     },
+  //     hideClass: {
+  //       popup: `
+  //         animate__animated
+  //         animate__fadeOutDown
+  //         animate__faster
+  //       `,
+  //     },
+  //   }).then(async (result) => {
+  //     if (result.isConfirmed) {
+  //       const name = result.value;
+  //       const token = await sendGuest(name);
+  //       // setCookie("token", token);
+  //       Cookies.set("token", token);
+  //       navigate("/map", { replace: true });
+  //     }
+  //   })
+    
+  // }
+
   return (
     <>
         {/* loading */}
@@ -75,6 +116,13 @@ const Login:React.FC<{}> = () => {
             <img src={googlelogo} alt="googlelogo" width={20} />
             <p className=" text-white ml-2"> Sign in</p>
           </div>
+          {/* <div
+            className="flex justify-center h-14 items-center bg-gray-500 text-white rounded-full"
+            onClick={login_guest}
+          >
+          <Icon>person</Icon> 
+          <h3 className=" select-none">Login with guest</h3> 
+          </div> */}
           {/* <GoogleLogin onSuccess={responseMessage} onError={errorMessage} /> */}
         </div>
       </div>

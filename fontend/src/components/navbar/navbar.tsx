@@ -18,6 +18,7 @@ const Navbar: React.FC<{
 
   const handleLogoClick = () => {
     setIsAnimating((prevState) => !prevState);
+    window.location.reload();
   };
 
   const handleContentClick = (contentId: any) => {

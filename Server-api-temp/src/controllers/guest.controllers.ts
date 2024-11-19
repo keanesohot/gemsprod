@@ -17,7 +17,6 @@ export const guestRoleController = async function (req: Request, res: Response) 
     const key = process.env.TOKEN_KEY || "kimandfamily";
     if (!token)
         return res.status(401).json({ msg: "No auth token, access denied" });
-
     try {
         const extractToken = jwt.verify(token, key) as { id: string, role: string };
         const guest = await findGuestById(extractToken.id);
