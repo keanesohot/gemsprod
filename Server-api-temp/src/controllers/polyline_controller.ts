@@ -16,3 +16,15 @@ export const getPolylines = async (req: Request, res: Response): Promise<void> =
     }
   }
 };
+
+export async function getPolylineDataFromDatabase() {
+  try {
+    console.log('Fetching polylines...');
+    const polylines = await Polyline.find();
+    console.log(`Found ${polylines.length} polylines`);
+    return polylines;
+  } catch (error) {
+    console.error('Error fetching polylines:', error);
+    throw error;
+  }
+}

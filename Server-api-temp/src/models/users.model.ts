@@ -22,13 +22,8 @@ export const userSchema = new mongoose.Schema({
   },
   role:{
     required:true,
+    ref: 'Role',
     type:String,
-    validate: {
-      validator: function(value: string) {
-          return /^[A-Z]+$/.test(value);
-      },
-      message: (props: { value: any; }) => `${props.value} is not a valid Role name. Only capital letters are allowed.`,
-  },
   },
   addedAt: {
     required: false,

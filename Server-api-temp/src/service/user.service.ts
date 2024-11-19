@@ -12,6 +12,11 @@ export const regis_user:{
 } = async (payload:interface_User)=>{
     try {
         const key = process.env.TOKEN_KEY || "kimandfamily";
+        // find role in database
+        const role = await RoleModel.findOne({ Role: payload.role });
+        if (!role) {
+            throw new Error('Role not found');
+        }
         // find user in database
         const user = await User.findOne({ email: payload.email });
         // console.log("User found:", user);
@@ -70,10 +75,10 @@ export const addRole = async (roleName: string) => {
     }
 };
 
-export const findRoleByName = async (roleName: any) => {
+export const findRoleByName = async (roleName: string) => {
     try {
         const role = await RoleModel.findOne({ Role: roleName });
-        if (role === null) {
+        if (!role) {
             throw new Error('Role not found');
         }
         return role;
@@ -86,11 +91,11 @@ export const findRoleByName = async (roleName: any) => {
 export const findUserById = async (objectId:string)=>{
     try {
         const key = process.env.TOKEN_KEY || "kimandfamily";
-        const user = await User.findById(objectId);
+        const user = await User.findById(objectId).populate('role');
         if (!user) {
             throw new Error('User not found');
         }
-        return user
+        return user;
     } catch (error) {
         console.error('Error finding user:', error);
         throw error;
