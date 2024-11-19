@@ -71,6 +71,10 @@ const Sidebar: React.FC<{ userInfo: User | null }> = ({ userInfo }) => {
       text: "Mark Pin",
       icon: "add_location",
     },
+    {
+      text:"Addstaff",
+      icon:"person_add"
+    },
     { text: "FeedBack", icon: "feedback" },
     { text: "Summary", icon: "directions_bus" },
   ];
