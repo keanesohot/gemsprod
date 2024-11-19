@@ -3,6 +3,9 @@ import jwt from 'jsonwebtoken';
 import RoleModel from '../models/roles.model'; // Adjust the path as per your file structure
 import { interface_editUser, interface_User } from "../interface/user.interface";
 import { Types } from "mongoose";
+import Activity from "../models/activity_model";
+import Station from "../models/station_model";
+import mongoose from "mongoose";
 
 export const regis_user:{
     (payload:interface_User):Promise<{token:string,newUser:boolean,id:string}>
@@ -200,3 +203,61 @@ export const editUser:{(payload:interface_editUser):Promise<{message:string,succ
         throw error;
     }
 }
+
+export const findTotalUsers = async (): Promise<number> => {
+    try {
+        const totalUsers = await User.countDocuments();
+        return totalUsers;
+    } catch (error) {
+        console.error('Error finding total users:', error);
+        throw error;
+    }
+};
+
+
+
+
+// adctivity service
+export const addActivityBasedOnWaitingList = async (
+    activityData: {
+      email: string;
+      location: string;
+      stationMarker: string;
+      time: string;
+      route: string;
+      destinationMarker: string;
+    },
+    stationId: string
+  ) => {
+    try {
+      // Find the station and check the waiting list
+      const station = await Station.findById(stationId);
+      if (!station) {
+        return { status: "Error", message: "Station not found." };
+      }
+  
+      const userInWaitingList = station.waiting?.some(
+        (waitingUser) => waitingUser.email === activityData.email
+      );
+  
+      if (userInWaitingList) {
+        return {
+          status: "Success",
+          message: "User is already in the waiting list. No activity added.",
+        };
+      }
+  
+      // If the user is not in the waiting list, create the activity
+      const newActivity = new Activity(activityData);
+      await newActivity.save();
+  
+      return {
+        status: "Success",
+        message: "Activity added successfully.",
+        data: newActivity,
+      };
+    } catch (error) {
+      console.error("Error in addActivityBasedOnWaitingList service:", error);
+      throw new Error("Error processing activity.");
+    }
+  };

@@ -1,7 +1,7 @@
 import express, { Request, Response } from "express";
 import { auth } from "../service/auth.service";
 import jwt from "jsonwebtoken";
-import { editUser, findAllUser, findUserById, regis_user } from "../service/user.service";
+import { editUser, findAllUser, addActivityBasedOnWaitingList, findTotalUsers, findUserById, regis_user } from "../service/user.service";
 import { parseJwt } from "../service/auth.service";
 import { interface_editUser, interface_User } from "../interface/user.interface";
 import { Types } from "mongoose";
@@ -52,3 +52,36 @@ export const editStaffcontroller = async function (req: Request, res: Response) 
   }
   return res.status(400).send(message);
 }
+export const getTotalUsers = async (req: Request, res: Response): Promise<void> => {
+  try {
+      const totalUsers = await findTotalUsers();
+      res.status(200).json({ totalUsers });
+  } catch (error) {
+      console.error('Error in getTotalUsers controller:', error);
+      res.status(500).json({ error: 'Internal Server Error' });
+  }
+};
+
+
+
+// activity controller
+export const addActivity = async (req: Request, res: Response) => {
+  try {
+    const { email, location, stationMarker, time, route, destinationMarker, stationId } = req.body;
+
+    // Call the service to handle activity addition
+    const result = await addActivityBasedOnWaitingList(
+      { email, location, stationMarker, time, route, destinationMarker },
+      stationId
+    );
+
+    if (result.status === "Error") {
+      return res.status(400).json({ message: result.message });
+    }
+
+    return res.status(201).json({ message: result.message, data: result.data || null });
+  } catch (error) {
+    console.error("Error in addActivity controller:", error);
+    return res.status(500).json({ message: "Internal server error." });
+  }
+};

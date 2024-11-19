@@ -152,6 +152,7 @@ function useNearestStation(
           time: dateTime,
           route: selectedRoute || "N/A",
           destinationMarker: selectedMarker?.value._id || "N/A",
+          stationId: closestStation.stationId
         })
         .then(async (response) => {
           console.log("Activity posted successfully:", response.data);
