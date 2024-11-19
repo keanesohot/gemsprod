@@ -40,7 +40,8 @@ export async function auth(code: string) {
   return userDetails;
 }
 
-export async function parseJwt(token: string) {
-  var jsonPayload = await jwtDecode<Token>(token);
+export  function parseJwt(token: string) {
+  console.log("Token : ", token);
+  var jsonPayload =  jwtDecode<Token>(token);
   return jsonPayload;
 }

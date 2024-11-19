@@ -28,8 +28,8 @@ import {
   Typography,
 } from "@mui/material";
 import { Edit, Delete } from "@mui/icons-material";
-import { useCookies } from "react-cookie";
-
+// import { useCookies } from "react-cookie";
+import Cookies from 'js-cookie';
 const API = import.meta.env.VITE_API || "";
 
 // Interface for Data, excluding _id for Add
@@ -57,12 +57,11 @@ const Addstaff: React.FC = () => {
     email: "",
     role: "", // Add the 'role' property
   });
-  const [cookie] = useCookies(["token"]);
   const [formError, setFormError] = useState<{ [key: string]: string }>({});
   const fetchData = async () => {
     try {
       setLoading(true);
-      const response = await axios.get<Data[]>(`${API}/adminfunc/getstaff`,{headers: { "x-auth-token": cookie.token }});
+      const response = await axios.get<Data[]>(`${API}/adminfunc/getstaff`,{headers: { "x-auth-token": Cookies.get("token")  }});
       // console.log(response.data[0]._id);
       setRows(response.data);
       setLoading(false);
@@ -163,7 +162,7 @@ const Addstaff: React.FC = () => {
     try {
       console.log("Adding station with data:", formData); // Debugging
       const res =  await axios.post(`${API}/adminfunc/addstaff`, formData, {
-        headers: { "x-auth-token": cookie.token },
+        headers: { "x-auth-token": Cookies.get("token")  },
       });
       console.log("Data",res.data);
       if (res.status !== 200) {
@@ -192,7 +191,7 @@ const Addstaff: React.FC = () => {
       ); 
       // Debugging
       await axios.put(`${API}/adminfunc/editstaff`, formData, {
-        headers: { "x-auth-token": cookie.token },
+        headers: { "x-auth-token": Cookies.get("token")  },
       });
       // Fetch updated data from the server to reflect changes
       await fetchData();
@@ -214,7 +213,7 @@ const Addstaff: React.FC = () => {
     try {
       console.log("Deleting station with ID:", currentRow._id); // Debugging
       await axios.put(`${API}/adminfunc/editstaff`,request, {
-        headers: { "x-auth-token": cookie.token },
+        headers: { "x-auth-token": Cookies.get("token")  },
       });
       // Fetch updated data from the server to reflect changes
       await fetchData();

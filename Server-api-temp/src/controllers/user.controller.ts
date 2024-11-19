@@ -12,7 +12,7 @@ export const userRolecontroller = async function (req: Request, res: Response) {
   if (!token)
     return res.status(401).json({ msg: "No auth token, access denied" });
 
-  const extractToken = await parseJwt(token);
+  const extractToken =  parseJwt(token);
 
   const user = await findUserById(extractToken.id);
   

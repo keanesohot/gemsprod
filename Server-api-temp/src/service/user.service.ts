@@ -13,10 +13,12 @@ export const regis_user:{
     try {
         const key = process.env.TOKEN_KEY || "kimandfamily";
         // find role in database
-        const role = await RoleModel.findOne({ Role: payload.role });
-        if (!role) {
-            throw new Error('Role not found');
-        }
+        
+        // const role = await RoleModel.findOne({ Role: payload.role });
+        // if (!role) {
+        //     throw new Error('Role not found');
+        // }
+
         // find user in database
         const user = await User.findOne({ email: payload.email });
         // console.log("User found:", user);
@@ -138,7 +140,7 @@ export const editUser:{(payload:interface_editUser):Promise<{message:string,succ
         // console.log("Payload:", payload.id);
         const user = await User.findById(payload.id);
         const existingRole = await RoleModel.findOne({ Role: payload.role });  
-        const checkemail = await User.find({email:payload.email});
+        // const checkemail = await User.find({email:payload.email});
         const SUPERADMIN = process.env.SUPERADMIN || "khumnoiw@gmail.com";
         if (!existingRole) {
             throw new Error('Role not found');
@@ -150,9 +152,9 @@ export const editUser:{(payload:interface_editUser):Promise<{message:string,succ
             return {message:"Cannot edit admin",success:false};
             
         }
-        if (checkemail.length > 0) {
-            return {message:"Email already exists",success:false};
-        }
+        // if (checkemail.length > 0) {
+        //     return {message:"Email already exists",success:false};
+        // }
         // edit all fields
         if (payload.name && payload.role && payload.email) {
             user.name = payload.name;
