@@ -19,7 +19,8 @@ export async function auth(code: string) {
     client_secret: SECRET_ID,
     redirect_uri: "postmessage",
     grant_type: "authorization_code",
-  });
+  },
+  { timeout: 10000 });
   
   const accessToken = response.data.access_token;
   console.log("Access Token:", accessToken);
