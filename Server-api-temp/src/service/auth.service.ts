@@ -32,6 +32,7 @@ export async function auth(code: string) {
       headers: {
         Authorization: `Bearer ${accessToken}`,
       },
+       timeout: 10000 
     }
   );
   
