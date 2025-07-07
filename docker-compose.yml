@@ -16,7 +16,7 @@ services:
   api:
     build: ./Server-api-temp
     ports:
-      - '8886:8886'
+      - '8887:8887'
     environment:
       - MONGODB_URL = mongodb://root:1234@database:27017/finalpj?authSource=admin
     networks:
@@ -28,7 +28,7 @@ services:
   fontend:
     build: ./fontend
     ports:
-      - 3000:80
+      - 3001:80
     depends_on:
       - api
     networks:

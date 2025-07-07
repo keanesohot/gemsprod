@@ -1,7 +1,7 @@
 import axios from "axios";
 import { jwtDecode } from 'jwt-decode';
 import { User } from "../../interfaces/user.interface";
-const VITE_API = import.meta.env.VITE_API || "http://localhost:8886" 
+const VITE_API = import.meta.env.VITE_API || "http://localhost:8887" 
 
 export const sencodetobackend = async (code: string) => {
 //   console.log("code : ", code);

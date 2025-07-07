@@ -16,8 +16,8 @@ COPY . .
 # Build TypeScript
 RUN yarn build
 
-# Expose port 8886
-EXPOSE 8886
+# Expose port 8887
+EXPOSE 8887
 
 # Start the API server
 CMD ["npm", "start"]

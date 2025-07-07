@@ -2,7 +2,7 @@
     docker compose --env-file ./Server-api-temp/.env up --build -d
 
 # .env need
-   PORT = 8886
+   PORT = 8887
     ## for conect to database    
     MONGODB_URL 
     ## for conect to google login    
