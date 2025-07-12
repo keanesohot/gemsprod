@@ -6,6 +6,9 @@ $animationcontentTime: 1.75s
 .navbar
   transition: $animationcontentTime
   background-color: $primaryColorLighter
+  border-radius: 8px
+  margin-left: 4px
+  margin-right: 4px
   .navbar-wrapper
     display: flex
     justify-content: space-between
@@ -56,6 +59,24 @@ $animationcontentTime: 1.75s
     .logo
       animation: spininvert $animationlogoTime
       margin: 0 auto 0 auto
+
+.route-btn
+  width: 48px
+  height: 48px
+  border-radius: 50%
+  display: flex
+  align-items: center
+  justify-content: center
+  background: #8b090c
+  color: #fff
+  font-weight: bold
+  font-size: 1rem
+  margin: 0 8px
+  transition: background 0.2s, color 0.2s
+
+  &.selected
+    background: #e2b644
+    color: #8b090c
 
 @keyframes spin 
   from 

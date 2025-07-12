@@ -7,7 +7,10 @@ ENV MONGO_INITDB_ROOT_PASSWORD=1234
 EXPOSE 27017
 # Copy custom MongoDB configuration file
 COPY mongod.conf /etc/mongod.conf
-COPY keyFile /etc/mongo.key
+COPY mongo.key /data/mongo.key
+# COPY keyFile /etc/mongo.key
+RUN chmod 400 /data/mongo.key && chown mongodb:mongodb /data/mongo.key
+
 # RUN chown mongodb:mongodb /etc/mongo.key
 # Start MongoDB with replication
 CMD ["mongod", "--config", "/etc/mongod.conf", "--replSet", "rs0"] 

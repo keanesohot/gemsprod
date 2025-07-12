@@ -1,0 +1,27 @@
+body {
+  font-family: 'Inter', 'Roboto', 'Noto Sans Thai', Arial, sans-serif;
+  background: #f8fafc;
+  color: #222;
+  margin: 0;
+  padding: 0;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+button, input, textarea, select, .modal, .dialog, .card, .info-box {
+  border-radius: 12px !important;
+}
+
+@media (max-width: 600px) {
+  html {
+    font-size: 15px;
+  }
+}
+
+@media (min-width: 601px) {
+  html {
+    font-size: 16px;
+  }
+} 

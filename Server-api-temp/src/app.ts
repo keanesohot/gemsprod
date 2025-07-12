@@ -12,16 +12,19 @@ import { setupWebSocket } from "./websocket";
 import userroute from "./routes/adminfuncroutes";
 
 dotenv.config();
+console.log("REDIRECTURL:", process.env.REDIRECTURL);
+console.log("CLIENT_ID:", process.env.CLIENT_ID);
+console.log("SECRET_ID:", process.env.SECRET_ID);
 const app = express();
 app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
 
-const FONTENDURL = process.env.FONTENDURL || "http://localhost:5173";
+const FONTENDURL = process.env.FONTENDURL || "https://shutter.mfu.ac.th";
 console.log("Fontendurl : " + FONTENDURL);
 
 app.use(
   cors({
-    origin: [FONTENDURL, "http://localhost:5173"],
+    origin: [FONTENDURL, "https://shutter.mfu.ac.th"],
     credentials: true,
     methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
   })

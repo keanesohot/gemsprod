@@ -16,42 +16,57 @@ const Login:React.FC<{}> = () => {
   // const [, setCookie] = useCookies(["token"]);
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
-  const login = async (codeResponse: { code: string }) => {
+  const login = async (tokenResponse: { access_token: string }) => {
     setLoading(true);
-    const token = await sencodetobackend(codeResponse.code);
-    // setCookie("token", token);
-    Cookies.set("token", token);
-    // get role from user info
-    const userInfo = await getUserinfo(token);
+    try {
+      // สำหรับ implicit flow, tokenResponse จะมี access_token
+      const token = await sencodetobackend(tokenResponse.access_token, "https://shutter.mfu.ac.th");
+      console.log("Token received from backend:", token);
+      // setCookie("token", token);
+      Cookies.set("token", token);
+      console.log("Token set in cookies:", Cookies.get("token"));
+      console.log("All cookies:", document.cookie);
+      // get role from user info
+      const userInfo = await getUserinfo(token);
 
-    if (userInfo.role === null) {
-      return console.error("Database error");
-    }
-    
-    console.log("Role : ", userInfo.role);
-    setLoading(false);
-    switch (userInfo.role) {
-      case "USER":
-        navigate("/map", { replace: true });
-        break;
-      case "ADMIN":
-        navigate("/admin/dashboard", { replace: true });
-        break;
-      case "STAFF":
-        navigate("/staff/dashboard", { replace: true })
-        break;
-      default:
-        break;
+      if (userInfo.role === null) {
+        console.error("Database error - userInfo.role is null");
+        setLoading(false);
+        return;
+      }
+      
+      console.log("Role : ", userInfo.role);
+      setLoading(false);
+      switch (userInfo.role) {
+        case "USER":
+          navigate("/map", { replace: true });
+          break;
+        case "ADMIN":
+          navigate("/admin/dashboard", { replace: true });
+          break;
+        case "STAFF":
+          navigate("/staff/dashboard", { replace: true })
+          break;
+        default:
+          break;
+      }
+    } catch (error) {
+      console.error("Error in login function:", error);
+      setLoading(false);
     }
   };
 
   const auth = useGoogleLogin({
-    onSuccess: (codeResponse) => login(codeResponse),
+    onSuccess: (tokenResponse: { access_token: string }) => login(tokenResponse),
     onError: () => {
       console.log("Login Failed");
     },
-    flow: "auth-code",
+    flow: "implicit"
   });
+
+  const handleGoogleLogin = () => {
+    auth();
+  };
 
   // const login_guest = async () => {
   //   await Swal.fire({
@@ -111,7 +126,7 @@ const Login:React.FC<{}> = () => {
           />
           <div
             className="flex justify-center googlebutton h-14 items-center rounded-full"
-            onClick={auth}
+            onClick={handleGoogleLogin}
           >
             <img src={googlelogo} alt="googlelogo" width={20} />
             <p className=" text-white ml-2"> Sign in</p>

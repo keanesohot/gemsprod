@@ -89,6 +89,10 @@ const StationMarker: React.FC<{
 
   const { t } = useTranslation(); // Import the i18n configuration for language translation
 
+  // กำหนด path ไอคอนใหม่
+  const stationIcon1 = "/busstopicon.png";
+  const stationIcon2 = "/busstopicon2.png";
+
   return (
     <>
       {position.map((station, index) => {
@@ -116,10 +120,17 @@ const StationMarker: React.FC<{
                     color: "white",
                   }}
                   icon={{
-                    url: urlMarker
-                      ? `http://maps.google.com/mapfiles/ms/icons/${urlMarker}-dot.png`
-                      : "",
-                    labelOrigin: new google.maps.Point(15, -10),
+                    url: urlMarker === "green" ? stationIcon1 : stationIcon2,
+                    labelOrigin: new google.maps.Point(18, -8),
+                    scaledSize: window.google.maps.Size
+                      ? new window.google.maps.Size(36, 36)
+                      : null,
+                    origin: window.google.maps.Point
+                      ? new window.google.maps.Point(0, 0)
+                      : null,
+                    anchor: window.google.maps.Point
+                      ? new window.google.maps.Point(18, 18)
+                      : null,
                   }}
                   animation={
                     selectedMarker?.value._id == station._id

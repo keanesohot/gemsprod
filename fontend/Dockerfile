@@ -2,12 +2,13 @@ FROM node:20.0.0 as build
 
 WORKDIR /app/font
 COPY package.json .
+COPY package-lock.json .
+COPY .env ./
 
-RUN yarn install
+RUN npm install
 COPY . .
 
-
-RUN yarn build
+RUN npm run build
 
 # Use an official Nginx runtime as a parent image
 FROM nginx:alpine
@@ -18,8 +19,7 @@ COPY nginx.conf /etc/nginx/conf.d/default.conf
 # Copy the build output from the build stage to the nginx web server directory
 COPY --from=build /app/font/dist /usr/share/nginx/html
 
-# Expose port 3001 or by default port 80 to the outside world
-EXPOSE 3001
+EXPOSE 80
 
 # Start Nginx when the container is run
 CMD ["nginx", "-g", "daemon off;"]

@@ -37,12 +37,12 @@ const Mappage: React.FC<{}> = ({}) => {
   const [selectedstationMarker, setselectedstationMarker] =
     useState<SelectedMarker | null>(null);
 
-  useState(() => {
+  // เปลี่ยน useState เป็น useEffect สำหรับ data fetching
+  useEffect(() => {
     fetchStations(setStations, setLoading);
     fetchPolylines(setPolylines, setLoading);
-    console.log(stations);
-    console.log(polylines?.data);
-  });
+    // ไม่จำเป็นต้อง log stations/polylines ที่นี่
+  }, []);
 
   // console.log(loading);
 
@@ -143,3 +143,8 @@ const Mappage: React.FC<{}> = ({}) => {
 };
 
 export default Mappage;
+
+
+
+
+

@@ -24,6 +24,93 @@ interface TokenPayload {
   roles: string;
 }
 
+// ========== GLOBAL BUS DATA BROADCAST =============
+let latestBusData: any = null;
+let busClients: Set<WebSocket> = new Set();
+let isFetching = false; // ป้องกัน concurrent requests
+let consecutiveErrors = 0; // นับ error ต่อเนื่อง
+let lastFetchTime = 0; // เวลาที่ดึงข้อมูลล่าสุด
+
+const fetchAndBroadcastBusData = async () => {
+  // ป้องกัน concurrent requests
+  if (isFetching) {
+    console.log("Skipping fetch - already in progress");
+    return;
+  }
+
+  isFetching = true;
+  const startTime = Date.now();
+
+  try {
+    const response = await axios.get(
+      "https://www.ppgps171.com/mobile/api/mfutransit",
+      {
+        headers: {
+          Authorization: `Bearer ${BEARER_TOKEN}`,
+        },
+        timeout: 5000, // timeout 5 วินาที
+      }
+    );
+
+    // ตรวจสอบว่าข้อมูลใหม่หรือไม่
+    const newData = response.data;
+    const hasChanged = JSON.stringify(newData) !== JSON.stringify(latestBusData);
+    
+    if (hasChanged) {
+      latestBusData = newData;
+      lastFetchTime = startTime;
+      consecutiveErrors = 0; // reset error count
+      
+      // broadcast to all connected clients
+      let broadcastCount = 0;
+      busClients.forEach((client) => {
+        if (client.readyState === WebSocket.OPEN) {
+          try {
+            client.send(JSON.stringify(latestBusData));
+            broadcastCount++;
+          } catch (sendError) {
+            console.error("Error sending to client:", sendError);
+            busClients.delete(client); // ลบ client ที่มีปัญหา
+          }
+        }
+      });
+      
+      console.log(`Broadcasted to ${broadcastCount} clients in ${Date.now() - startTime}ms`);
+    } else {
+      console.log("No data change detected");
+    }
+
+  } catch (error) {
+    consecutiveErrors++;
+    console.error(`Error fetching bus data (attempt ${consecutiveErrors}):`, error);
+    
+    // ถ้า error มากเกินไป ให้เพิ่ม interval
+    if (consecutiveErrors >= 5) {
+      console.warn("Too many consecutive errors, consider checking API status");
+    }
+  } finally {
+    isFetching = false;
+  }
+};
+
+// Dynamic interval based on error count
+const getInterval = () => {
+  if (consecutiveErrors >= 3) {
+    return 20000; // 20 วินาทีถ้า error มาก
+  }
+  return 5000; // 5 วินาทีปกติ
+};
+
+// Start global interval with dynamic timing
+let intervalId = setInterval(fetchAndBroadcastBusData, getInterval());
+
+// Update interval based on error count
+setInterval(() => {
+  const newInterval = getInterval();
+  clearInterval(intervalId);
+  intervalId = setInterval(fetchAndBroadcastBusData, newInterval);
+}, 5000); // ตรวจสอบทุก 5 วินาที
+
 export const setupWebSocket = (server: any) => {
   const wss = new WebSocket.Server({ noServer: true });
 
@@ -87,27 +174,11 @@ export const setupWebSocket = (server: any) => {
 
 const handleBusWsConnection = (ws: WebSocket) => {
   console.log("Client connected to /busws");
-  let busData = {};
-
-  const fetchAndSendData = async () => {
-    try {
-      const response = await axios.get(
-        "https://www.ppgps171.com/mobile/api/mfutransit",
-        {
-          headers: {
-            Authorization: `Bearer ${BEARER_TOKEN}`,
-          },
-        }
-      );
-      busData = response.data;
-      ws.send(JSON.stringify(busData));
-    } catch (error) {
-      console.error("Error fetching bus data:", error);
-    }
-  };
-
-  fetchAndSendData();
-  const intervalId = setInterval(fetchAndSendData, 5000);
+  busClients.add(ws);
+  // ส่งข้อมูลล่าสุดให้ client ที่เพิ่งเชื่อมต่อ
+  if (latestBusData) {
+    ws.send(JSON.stringify(latestBusData));
+  }
 
   ws.on("message", (message) => {
     console.log("Received message on /busws:", message);
@@ -115,7 +186,7 @@ const handleBusWsConnection = (ws: WebSocket) => {
 
   ws.on("close", () => {
     console.log("Client disconnected from /busws");
-    clearInterval(intervalId);
+    busClients.delete(ws);
   });
 };
 

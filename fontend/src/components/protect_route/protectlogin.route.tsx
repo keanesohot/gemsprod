@@ -16,28 +16,33 @@ const ProtectloginRoute: React.FC<ProtectRouteProps> = ({ children = []}) => {
   
   useEffect(() => {
     const fetchUserRole = async () => {
-      if (Cookies.get("token") && Cookies.get("token") !== undefined && Cookies.get("token") !== 'undefined') {
-        try {
+      let finished = false;
+      try {
+        if (Cookies.get("token") && Cookies.get("token") !== undefined && Cookies.get("token") !== 'undefined') {
           const userInfo = await getUserinfo(Cookies.get("token"));
-          if (userInfo && userInfo.role) {
+          // เช็คจาก role เลย
+          if (userInfo?.role && userInfo.role !== null && userInfo.role !== 'undefined') {
             setIsAuthen(true);
             setUserRole(userInfo);
           } else {
             setIsAuthen(false);
           }
-        } catch (error) {
-          console.error('Error fetching user info:', error);
+        } else {
           setIsAuthen(false);
-          setIsLoading(false);
         }
-      } else {
+      } catch (error) {
         setIsAuthen(false);
+      } finally {
+        if (!finished) {
+          setIsLoading(false);
+          // log for debug
+          console.log('setIsLoading(false) called in protectlogin');
+          finished = true;
+        }
       }
-      setIsLoading(false);
     };
-
     fetchUserRole();
-  }, [Cookies.get("token")]);
+  }, []);
 
   if (isLoading) {
     return <Loading/>; // Or any other loading indicator

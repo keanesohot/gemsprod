@@ -1,5 +1,5 @@
 # Use a lightweight Node.js image
-FROM node:20.0.0
+FROM node:20
 
 # Set working directory
 WORKDIR /app
@@ -8,7 +8,7 @@ WORKDIR /app
 COPY package*.json ./
 
 # Install dependencies
-RUN yarn install
+RUN npm install
 
 # Copy the entire project
 COPY . .

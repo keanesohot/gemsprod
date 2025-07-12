@@ -3,12 +3,12 @@ services:
   database:
     build: ./mongo
     ports:
-      - '27018:27017'
+      - '27018:27017'      
     user: root
     volumes:
       - ./data:/data/db
       - ./mongo/mongod.conf:/etc/mongod.conf
-      - ./mongo/mongo.key:/etc/mongo.key
+      - ./mongo/keyFile:/etc/mongo.key
     networks:
       - finalpjnet
     restart: unless-stopped
@@ -16,9 +16,7 @@ services:
   api:
     build: ./Server-api-temp
     ports:
-      - '8887:8887'
-    env_file:
-      - ./Server-api-temp/.env
+      - '8887:8886'        
     environment:
       - MONGODB_URL=mongodb://root:1234@database:27017/finalpj?authSource=admin
     networks:
@@ -30,7 +28,7 @@ services:
   fontend:
     build: ./fontend
     ports:
-      - 8080:80
+      - '3001:80'          
     depends_on:
       - api
     networks:
@@ -41,14 +39,16 @@ services:
     build: ./nginx
     image: nginx:alpine
     ports:
-      - 8081:80
+      - '8081:80'          
     depends_on:
       - fontend
     networks:
       - finalpjnet
     restart: unless-stopped
+
 volumes:
   mongodb_data:
+
 networks:
   finalpjnet:
     driver: bridge

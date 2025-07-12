@@ -141,7 +141,7 @@ export const editUser:{(payload:interface_editUser):Promise<{message:string,succ
         const user = await User.findById(payload.id);
         const existingRole = await RoleModel.findOne({ Role: payload.role });  
         // const checkemail = await User.find({email:payload.email});
-        const SUPERADMIN = process.env.SUPERADMIN || "noppakan@mfu.ac.th";
+        const SUPERADMIN = process.env.SUPERADMIN || "khumnoiw@gmail.com";
         if (!existingRole) {
             throw new Error('Role not found');
         } 
