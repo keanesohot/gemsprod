@@ -21,15 +21,15 @@ const MAPID = import.meta.env.VITE_MAPID || "";
 const MAPAPIKEY = import.meta.env.VITE_GOOGLE_MAPS_API_KEY || "";
 const busIcon = (direction: number) => {
   return {
-    url: "/Bus.svg",
+    url: "/Bus.svg", // ยังใช้ไอคอนเดิมสำหรับรถเจ็ม
     scaledSize: window.google.maps.Size
-      ? new window.google.maps.Size(140, 90)
-      : null, // ขยายขนาด bus icon
+      ? new window.google.maps.Size(120, 76)
+      : null,
     origin: window.google.maps.Point
       ? new window.google.maps.Point(0, 0)
       : null,
     anchor: window.google.maps.Point
-      ? new window.google.maps.Point(70, 45)
+      ? new window.google.maps.Point(60, 38)
       : null,
     rotation: direction,
   };
@@ -223,13 +223,13 @@ const {t} = useTranslation();
             icon={{
               url: userIcon,
               scaledSize: window.google.maps.Size
-                ? new window.google.maps.Size(44, 40)
+                ? new window.google.maps.Size(22, 20)
                 : null,
               origin: window.google.maps.Point
                 ? new window.google.maps.Point(0, 0)
                 : null,
               anchor: window.google.maps.Point
-                ? new window.google.maps.Point(22, 20)
+                ? new window.google.maps.Point(11, 10)
                 : null,
             }}
           />
@@ -343,8 +343,8 @@ const {t} = useTranslation();
     });
   }, [stations, selectedRoute]);
 
-  const iconStation1 = "green";
-  const iconStation2 = "red";
+  const iconStation1 = "/busstopicon.png";
+  const iconStation2 = "/busstopicon2.png";
 
   return (
     <>
@@ -353,7 +353,7 @@ const {t} = useTranslation();
           <Map
             style={{ width: "100%", height: "100vh" }}
             defaultZoom={15}
-            defaultCenter={{ lat: 20.051091, lng: 99.894650 }}
+            defaultCenter={{ lat: 20.051005, lng: 99.894997 }}
             center={center}
             mapId={MAPID}
             gestureHandling={"greedy"}

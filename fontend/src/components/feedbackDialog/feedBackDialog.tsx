@@ -66,35 +66,27 @@ const FeedbackDialog: React.FC<FeedbackDialogProps> = ({
       onClick={onClose}
     >
       <div
-        className={`bg-white shadow-xl rounded-lg p-6 max-w-md w-full transform transition-all ${
+        className={`bg-white rounded-lg p-6 max-w-md w-full transform transition-all ${
           isVisible ? "scale-100 opacity-100" : "scale-95 opacity-0"
         }`}
-        style={{
-          borderRadius: 12,
-          maxWidth: '95vw',
-          minWidth: 0,
-          fontFamily: 'inherit',
-        }}
         onClick={(e) => e.stopPropagation()}
       >
-        <h2 className="text-2xl font-bold mb-4 text-gray-800">We need your feedback</h2>
+        <h2 className="text-2xl font-bold mb-4">We need your feedback</h2>
         <form onSubmit={handleSubmit} className="space-y-4">
           <textarea
             value={feedback}
             onChange={(e) => setFeedback(e.target.value)}
             placeholder="Enter your feedback..."
             rows={4}
-            className="w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-base"
-            style={{ borderRadius: 8, fontFamily: 'inherit' }}
+            className="w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
             disabled={isSubmitting}
           />
           {error && <p className="text-red-500 text-sm">{error}</p>}
-          <div className="flex flex-col sm:flex-row justify-end space-y-2 sm:space-y-0 sm:space-x-2">
+          <div className="flex justify-end space-x-2">
             <button
               type="button"
               onClick={onClose}
               className="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 rounded-md hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-500"
-              style={{ borderRadius: 8 }}
               disabled={isSubmitting}
             >
               Cancel
@@ -102,7 +94,6 @@ const FeedbackDialog: React.FC<FeedbackDialogProps> = ({
             <button
               type="submit"
               className="px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:opacity-50"
-              style={{ borderRadius: 8 }}
               disabled={isSubmitting}
             >
               {isSubmitting ? "Submitting..." : "Submit"}

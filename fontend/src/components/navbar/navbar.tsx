@@ -4,8 +4,8 @@ import { useState } from "react";
 import 'animate.css';
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
-import settingIcon from '/Settingicon.png';
-import languageIcon from '/languageicon.png';
+import settingIcon from "/Settingicon.png";
+import languageIcon from "/languageicon.png";
 
 // export const [activeContent, setActiveContent] = useState(null);
 
@@ -44,11 +44,11 @@ const Navbar: React.FC<{
 
   return (
     <nav
-      className={`navbar fixed bottom-4 left-1 right-1 z-50 ${
+      className={`navbar fixed bottom-5 left-1 right-0 z-50 ${
         isAnimating ? "" : "navbar-close"
       }`}
     >
-      <div className="px-10 flex items-center h-16 navbar-wrapper ">
+      <div className="px-10 flex items-center h-14 navbar-wrapper ">
         <div
           className={`content ${
             activeContent === "content1" ? "selected" : ""
@@ -73,15 +73,15 @@ const Navbar: React.FC<{
           onClick={handleLogoClick}
         />
         <div
-          className={`content route-btn  ${
+          className={`content  ${
             activeContent === "route1" ? "selected" : ""
-          }`}
+          } `}
           onClick={() => handleContentClick("route1")}
         >
          {t('navbar.route.route1')}
         </div>
         <div
-          className={`content route-btn  ${activeContent === "route2" ? "selected" : ""} `}
+          className={`content  ${activeContent === "route2" ? "selected" : ""} `}
           onClick={() => handleContentClick("route2")}
         >
           {t('navbar.route.route2')}

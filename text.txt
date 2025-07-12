@@ -1,51 +1,50 @@
-version: "3.7"
-services:
-  database:
-    build: ./mongo
-    ports:
-      - '27017:27017'
-    user: root
-    volumes:
-      - ./data:/data/db
-      - ./mongo/mongod.conf:/etc/mongod.conf
-      - ./mongo/keyFile:/etc/mongo.key
-    networks:
-      - finalpjnet
-    restart: unless-stopped
+import { useState, useEffect, useCallback } from 'react';
+import { BusData } from '../../interfaces/bus.interface';
+const VITE_WSURL = import.meta.env.VITE_WSURL
 
-  api:
-    build: ./Server-api-temp
-    ports:
-      - '8886:8886'
-    environment:
-      - MONGODB_URL=mongodb://root:1234@database:27017/finalpj?authSource=admin
-    networks:
-      - finalpjnet
-    depends_on:
-      - database
-    restart: unless-stopped
+import Cookies from "js-cookie";
 
-  fontend:
-    build: ./fontend
-    ports:
-      - 3000:80
-    depends_on:
-      - api
-    networks:
-      - finalpjnet
-    restart: unless-stopped
-  nginx:
-    build: ./nginx
-    image: nginx:alpine
-    ports:
-      - 80:80
-    depends_on:
-      - fontend
-    networks:
-      - finalpjnet
-    restart: unless-stopped
-volumes:
-  mongodb_data:
-networks:
-  finalpjnet:
-    driver: bridge
+
+export function useWebSocketData() {
+  const [messages, setMessages] = useState<BusData | null>(null);
+  const [socket, setSocket] = useState<WebSocket | null>(null);
+  const url = `${VITE_WSURL}`;
+  const token = Cookies.get("token") || "";
+  useEffect(() => {
+    const ws = new WebSocket(url,[token]);
+
+    ws.onopen = () => {
+      console.log('WebSocket connected');
+      setSocket(ws);
+    };
+
+    ws.onmessage = (event: MessageEvent) => {
+      try {
+        const newMessage: BusData = JSON.parse(event.data);
+        setMessages(newMessage);
+      } catch (error) {
+        console.error('Error parsing WebSocket message:', error);
+      }
+    };
+
+    ws.onerror = (error: Event) => {
+      console.error('WebSocket error:', error);
+    };
+
+    ws.onclose = () => {
+      console.log('WebSocket disconnected');
+    };
+
+    return () => {
+      ws.close();
+    };
+  }, []);
+
+  const sendMessage = useCallback((message: any) => {
+    if (socket) {
+      socket.send(JSON.stringify(message));
+    }
+  }, [socket]);
+
+  return { messages, sendMessage };
+}

@@ -10,7 +10,6 @@ import Adminlayout from "./layout/admin.layout";
 import BrowserDetector from "./components/checkBrowser/browserDetector";
 import createStaffRoutes from './components/staff/index';
 import Stafflaout from "./layout/staff.layout";
-import './global.css';
 
 function App() {
   const adminRoutes = createAdminRoutes();

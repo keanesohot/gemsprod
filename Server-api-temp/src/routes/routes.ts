@@ -61,7 +61,7 @@ router.get('/getPolyline', getPolylines);
 
 
 //feedback
-router.post('/createFeedback',auth_middleware ,createFeedback);
+router.post('/createFeedback',admin_middleware ,createFeedback);
 router.get('/getFeedback', admin_middleware ,getAllFeedbacks)
 
 //user

@@ -100,38 +100,33 @@ const MapAdminComponent = () => {
   };
 
   const stationMarkers = useMemo(() => {
-    if (stations) {
-      return stations
-        .map((station) => {
-          if (station && station.position) {
-            const [lat, lng] = station.position.split(",").map(Number);
-            if (!isNaN(lat) && !isNaN(lng)) {
-              const color = getMarkerColor(station.waitingLength);
-              return (
-                <Marker
-                  key={station._id}
-                  position={{ lat, lng }}
-                  title={`Station: ${station.id}, Waiting: ${station.waitingLength}`}
-                  icon={{ url: color ? `http://maps.google.com/mapfiles/ms/icons/${color}-dot.png` : '', labelOrigin: new google.maps.Point(15, -10), }
-                  }
-                  label={{
-
-                    text: station.id.toString(),
-                    color: "#8b090c", // Customize color as needed
-                    fontSize: "13px", // Customize font size as needed
-                    fontWeight: "bold", // Customize font weight as needed
-                  }}
-
-                />
-
-              );
-            }
+    if (!Array.isArray(stations)) return null;
+    return stations
+      .map((station) => {
+        if (station && station.position) {
+          const [lat, lng] = station.position.split(",").map(Number);
+          if (!isNaN(lat) && !isNaN(lng)) {
+            const color = getMarkerColor(station.waitingLength);
+            return (
+              <Marker
+                key={station._id}
+                position={{ lat, lng }}
+                title={`Station: ${station.id}, Waiting: ${station.waitingLength}`}
+                icon={{ url: color ? `http://maps.google.com/mapfiles/ms/icons/${color}-dot.png` : '', labelOrigin: new google.maps.Point(15, -10), }
+                }
+                label={{
+                  text: station.id.toString(),
+                  color: "#8b090c",
+                  fontSize: "13px",
+                  fontWeight: "bold",
+                }}
+              />
+            );
           }
-          return null;
-        })
-        .filter(Boolean);
-    }
-    return null;
+        }
+        return null;
+      })
+      .filter(Boolean);
   }, [stations]);
 
   const sortedStations = useMemo(() => {
@@ -217,7 +212,7 @@ const MapAdminComponent = () => {
               </TableHead>
               <TableBody>
                 {sortedStations
-                  .filter((station) => station.waitingLength !== 0)
+                  .filter((station) => station && typeof station.name === "string" && station.waitingLength !== 0)
                   .map((station) => (
                     <TableRow key={station._id}>
                       <TableCell component="th" scope="row">
