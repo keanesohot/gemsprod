@@ -27,7 +27,8 @@ export const auth_controller = async (req:Request,res:Response)=>{
             const user: interface_User = {
                 email:userDetails.email,
                 name:userDetails.name,
-                role:role
+                role:role,
+                picture:userDetails.picture // เพิ่มรูปจาก Google
             };
             const {token,newUser} = await regis_user(user);
             res.status(200).send(token);
@@ -50,7 +51,8 @@ export const auth_controller = async (req:Request,res:Response)=>{
         const user: interface_User = {
             email:userDetails.email,
             name:userDetails.name,
-            role:role
+            role:role,
+            picture:userDetails.picture // เพิ่มรูปจาก Google
         };
         const {token,newUser} = await regis_user(user);
         res.status(200).send(token);

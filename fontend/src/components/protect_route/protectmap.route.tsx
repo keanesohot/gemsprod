@@ -4,6 +4,7 @@ import { getUserinfo } from '../../containers/login/Login';
 import Loading from '../loading/loading';
 import Swal from 'sweetalert2';
 import Cookies from 'js-cookie';
+import { useTranslation } from 'react-i18next';
 
 
 interface ProtectRouteProps {
@@ -17,6 +18,7 @@ const ProtectmapRoute: React.FC<ProtectRouteProps> =  ({ children, requireRoles 
   const [isAuthen, setIsAuthen] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [tokenCheck, setTokenCheck] = useState(0);
+  const { t } = useTranslation();
 
   useEffect(() => {
     const fetchUserRole = async () => {
@@ -42,9 +44,7 @@ const ProtectmapRoute: React.FC<ProtectRouteProps> =  ({ children, requireRoles 
       } finally {
         if (!finished) {
           setIsLoading(false);
-          // log for debug
-          console.log('setIsLoading(false) called in protectmap');
-          finished = true;
+                      finished = true;
         }
       }
     };
@@ -81,14 +81,15 @@ const ProtectmapRoute: React.FC<ProtectRouteProps> =  ({ children, requireRoles 
   console.log(matchRoles);
   if (!matchRoles) {
      Swal.fire({
-      title: 'Permission denied',
-      text: 'You do not have permission to access this page',
+      title: t('navbar.permissionDenied.title'),
+      text: t('navbar.permissionDenied.text'),
       icon: 'error',
       allowOutsideClick: false,
-      confirmButtonText: 'OK',}).then(()=>{
-          Cookies.remove("token");
-          return <Navigate to="/" replace />;
-      });
+      confirmButtonText: t('navbar.permissionDenied.confirm'),
+    }).then(()=>{
+        Cookies.remove("token");
+        return <Navigate to="/" replace />;
+    });
   }
   
 

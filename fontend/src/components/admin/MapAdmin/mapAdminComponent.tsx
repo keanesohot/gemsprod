@@ -66,7 +66,7 @@ const MapAdminComponent = () => {
   const isFirstFetchRef = useRef(true);
   // Update stations when messages change and play notification if needed
   useEffect(() => {
-    console.log(loading);
+    // Loading state
     if (messages) {
       const newStations = Array.isArray(messages) ? messages : [messages];
 

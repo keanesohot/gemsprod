@@ -167,7 +167,6 @@ const TableComponent: React.FC = () => {
     if (!validateForm()) return;
 
     try {
-      console.log("Adding station with data:", formData); // Debugging
       await axios.post(`${API}/stations/add`, formData, {
         headers: { "x-auth-token": cookie.token },
       });
@@ -186,12 +185,7 @@ const TableComponent: React.FC = () => {
     if (!currentRow || !validateForm()) return;
 
     try {
-      console.log(
-        "Editing station with ID:",
-        currentRow._id,
-        "and data:",
-        formData
-      ); // Debugging
+      // Editing station
       await axios.patch(`${API}/updatestations/${currentRow._id}`, formData, {
         headers: { "x-auth-token": cookie.token },
       });
@@ -210,7 +204,6 @@ const TableComponent: React.FC = () => {
     if (!currentRow) return;
 
     try {
-      console.log("Deleting station with ID:", currentRow._id); // Debugging
       await axios.delete(`${API}/deletestations/${currentRow._id}`, {
         headers: { "x-auth-token": cookie.token },
       });

@@ -20,7 +20,12 @@ export const userRolecontroller = async function (req: Request, res: Response) {
     return res.status(500).send(null);
   }
   
-  const token_userinfo = jwt.sign({"email":user.email,"name":user.name,"role":user.role}, key);
+  const token_userinfo = jwt.sign({
+    "email":user.email,
+    "name":user.name,
+    "role":user.role,
+    "picture":user.picture // เพิ่มรูปโปรไฟล์ใน payload
+  }, key);
   return res.status(200).send(token_userinfo);
 };
 

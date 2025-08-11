@@ -33,21 +33,37 @@ export const regis_user:{
           const newuser = await User.create({
             email: payload.email,
             name: payload.name,
-            role:roleindatabase.Role
+            role: roleindatabase.Role,
+            picture: payload.picture || null
           });
     
           console.log("New user created:", newuser);
-           token = jwt.sign({ id: newuser._id }, key);
+          token = jwt.sign({ 
+            id: newuser._id,
+            email: newuser.email,
+            name: newuser.name,
+            role: newuser.role
+          }, key);
           return {'token':token,'newUser':true,'id':`${newuser._id}`};
         }
     
         if (user.role === undefined || user.role === null ) {
             user.updateOne({role:payload.role});
         }
+        // update picture ทุกครั้งที่ login
+        if (payload.picture) {
+            user.picture = payload.picture;
+            await user.save();
+        }
 
-         token = jwt.sign({ id: user._id }, key);
+         token = jwt.sign({ 
+           id: user._id,
+           email: user.email,
+           name: user.name,
+           role: user.role // ใช้ role จาก database
+         }, key);
 
-         return {'token':token,'newUser':false,'id':`${user._id}`};;
+         return {'token':token,'newUser':false,'id':`${user._id}`};
     } catch (error) {
         console.error('Error adding user:', error);
         throw error;

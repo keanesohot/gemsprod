@@ -160,11 +160,9 @@ const Addstaff: React.FC = () => {
     if (!validateForm()) return;
 
     try {
-      console.log("Adding station with data:", formData); // Debugging
       const res =  await axios.post(`${API}/adminfunc/addstaff`, formData, {
         headers: { "x-auth-token": Cookies.get("token")  },
       });
-      console.log("Data",res.data);
       if (res.status !== 200) {
         throw new Error(res.data);
       }
@@ -183,13 +181,7 @@ const Addstaff: React.FC = () => {
     if (!currentRow || !validateForm()) return;
 
     try {
-      console.log(
-        "Editing station with ID:",
-        currentRow._id,
-        "and data:",
-        formData
-      ); 
-      // Debugging
+      // Editing staff
       await axios.put(`${API}/adminfunc/editstaff`, formData, {
         headers: { "x-auth-token": Cookies.get("token")  },
       });
@@ -211,7 +203,6 @@ const Addstaff: React.FC = () => {
         role:"USER"
     }
     try {
-      console.log("Deleting station with ID:", currentRow._id); // Debugging
       await axios.put(`${API}/adminfunc/editstaff`,request, {
         headers: { "x-auth-token": Cookies.get("token")  },
       });

@@ -38,7 +38,6 @@ const FeedbackDialog: React.FC<FeedbackDialogProps> = ({
       },{
         headers:{"x-auth-token":token}
       });
-      console.log(response);
       if (response.status === 201) {
         // Feedback submitted successfully
         Cookies.set("isSubmitted", "true", { expires: 7 }); // Set cookie to expire in 1 year

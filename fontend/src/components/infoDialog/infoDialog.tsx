@@ -144,7 +144,7 @@ const InfoDialog: React.FC<{
       });
       if (typeof result === "number") {
         setStationToStation(result);
-        console.log("StationToStation", result);
+        // Distance calculated
       }
     }
   }, [selectedMarker, closestStation]);
@@ -188,140 +188,85 @@ const InfoDialog: React.FC<{
   }, [center, shouldResetCenter]);
 
   const { t } = useTranslation();
+  // ดึง array ชื่อจุดจอดจาก i18n ตาม selectedRoute
+  const stopsRoute1 = t('navbar.lineInfo.route1', { returnObjects: true }) as string[];
+  const stopsRoute2 = t('navbar.lineInfo.route2', { returnObjects: true }) as string[];
 
   return (
     <>
       {/* Dialog */}
       <div
-        className={`fixed bottom-24 left-0 right-0 z-50  transition-all duration-300 ease-in-out ${
+        className={`fixed bottom-24 left-0 right-0 z-50 flex justify-center transition-all duration-300 ease-in-out ${
           isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-full"
         }`}
       >
-        <div className="card flex justify-center">
-          <div className="bg-white  rounded-xl shadow-lg py-6 px-10 h-60 w-96 relative">
-            <div className="title flex justify-between item-center text-sm">
-              <p className="flex ">
-                <img src={gemlogo} alt="logo" className="w-10" />
-                Gem {closestBusData.busId}
-              </p>
-              {closestBusData.eta && closestBusData.eta > 0 ? (
-                <span>
-                  {t("navbar.infodialog.busArrival", {
-                    minutes: closestBusData.eta.toFixed(2),
-                  })}
-                </span>
-              ) : (
-                <span>{t("navbar.infodialog.busArrivalError")}</span>
-              )}
+          <div
+            className="bg-white rounded-2xl shadow-2xl py-6 px-6 sm:px-10 max-w-md w-full relative flex flex-col gap-4"
+            style={{ minWidth: 280 }}
+          >
+            {/* Header */}
+            <div className="flex items-center justify-between mb-2">
+              <div className="flex items-center gap-2">
+                <img src={gemlogo} alt="logo" className="w-10 h-10 rounded-full bg-gray-100" />
+                <div className="font-bold text-lg text-[#8b090c]">GEM {closestBusData.busId}</div>
+              </div>
+              <button
+                className="text-gray-400 hover:text-[#8b090c] transition-colors duration-150 text-2xl font-bold p-1 rounded-full focus:outline-none"
+                onClick={toggleVisibility}
+                aria-label="ปิด"
+              >
+                ×
+              </button>
             </div>
-
-            <div className="divider">
-              <div className="border-t border-gray-300"></div>
-            </div>
-
-            <div className="currentLocation flex justify-center item-center pt-2">
-              <div className="w-60 h-10 mt-2 shadow-lg bg-stone-400 flex items-center justify-start pl-3">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  className="h-6 w-6 text-red-600"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"
-                  />
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"
-                  />
-                </svg>
-                <span className="text-white font-semibold pl-2">
-                  {/* station ======================================================================================= */}
-                  {
-                    <p>
-                      {closestStation
-                        ? t("navbar.infodialog.closestStation", {
-                            stationName: closestStation.stationNameId,
-                            distance: closestStation.distance.toFixed(0),
-                          })
-                        : t("navbar.infodialog.findingLocation")}
-                    </p>
-                  }
+            {/* ETA/Arrival */}
+            <div className="flex items-center justify-between mb-2">
+              <div className="flex items-center gap-2">
+                <span className="material-icons text-[#e2b644] text-2xl">schedule</span>
+                <span className="text-gray-700 font-medium">
+                  {closestBusData.eta && closestBusData.eta > 0
+                    ? t("navbar.infodialog.busArrival", { minutes: closestBusData.eta.toFixed(2) })
+                    : t("navbar.infodialog.busArrivalError")}
                 </span>
               </div>
             </div>
-
-            <div className="between flex items-center pl-8">
-              <div className="h-16 border-l border-black"></div>
-              <div className="pl-2">
-                {selectedMarker ? (
-                  <div className="flex-col">
-                    <div>
-                      <span className="text-black">
-                        {t("navbar.infodialog.distanceInfo", {
-                          distance: stationToStation.toFixed(0),
-                        })}{" "}
-                        {/* Distance interpolation */}
-                      </span>
-                    </div>
-                    <div>
-                      <span>
-                        {t("navbar.infodialog.etaInfo", { eta })}{" "}
-                        {/* ETA interpolation */}
-                      </span>
-                    </div>
-                  </div>
-                ) : (
-                  ""
-                )}
-              </div>
+            {/* Closest Station */}
+            <div className="flex items-center gap-2 bg-[#e2b644]/80 rounded-lg px-3 py-2 shadow">
+              <span className="material-icons text-[#8b090c] text-xl">place</span>
+              <span className="text-black font-semibold">
+                {closestStation
+                  ? t("navbar.infodialog.closestStation", {
+                      stationName: closestStation.stationNameId,
+                      distance: closestStation.distance.toFixed(0),
+                    })
+                  : t("navbar.infodialog.findingLocation")}
+              </span>
             </div>
-            <div
-              className="destination select-none subtitle flex justify-center items-center"
+            {/* Distance & ETA to selected marker */}
+            {selectedMarker && (
+              <div className="flex flex-col gap-1 bg-[#f9f4d4] rounded-lg px-3 py-2 shadow">
+                <div className="flex items-center gap-2">
+                  <span className="material-icons text-[#1976d2] text-xl">directions_bus</span>
+                  <span className="text-black">
+                    {t("navbar.infodialog.distanceInfo", { distance: stationToStation.toFixed(0) })}
+                  </span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <span className="material-icons text-[#1976d2] text-xl">timer</span>
+                  <span>
+                    {t("navbar.infodialog.etaInfo", { eta })}
+                  </span>
+                </div>
+              </div>
+            )}
+            {/* Search/Select Station Button */}
+            <button
+              className="w-full mt-2 py-3 rounded-lg bg-[#8b090c] hover:bg-[#a91c1c] text-white font-bold text-base flex items-center justify-center gap-2 shadow-lg transition-colors duration-150"
               onClick={toggleSearch}
             >
-              <div className="w-60 h-10 shadow-lg bg-stone-400 flex items-center justify-start pl-3">
-                <div className="material-icons select-none text-red-600">
-                  search
-                </div>
-                {selectedMarker ? (
-                  <span className="text-white font-semibold pl-2">
-                    {t("navbar.infodialog.markerInfo", {
-                      markerKey: selectedMarker.key,
-                    })}
-                  </span>
-                ) : (
-                  <span className="text-white font-semibold pl-2">
-                    {t("navbar.infodialog.selectMarker")}
-                  </span>
-                )}
-              </div>
-            </div>
-
-            <button
-              className="absolute top-2 right-2 text-gray-500 hover:text-gray-700"
-              onClick={toggleVisibility}
-            >
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                className="h-6 w-6"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M19 9l-7 7-7-7"
-                />
-              </svg>
+              <span className="material-icons text-white text-xl">search</span>
+              {selectedMarker
+                ? t("navbar.infodialog.markerInfo", { markerKey: selectedMarker.key })
+                : t("navbar.infodialog.selectMarker")}
             </button>
             {/* Search Overlay */}
             {isSearch && (
@@ -344,15 +289,25 @@ const InfoDialog: React.FC<{
                     onChange={(e) => setSearchQuery(e.target.value)}
                   />
                   <div className="stationList">
-                    {filteredStations.map((station) => (
-                      <div
-                        key={station._id}
-                        className="stationItem flex items-center justify-between pl-3 py-1 border-b border-gray-200 cursor-pointer"
-                        onClick={() => handleStationClick(station)}
-                      >
-                        <span className="text-black">{station.name}</span>
-                      </div>
-                    ))}
+                    {filteredStations.map((station) => {
+                      const idx = Number(station.id) - 1;
+                      let displayName = station.name;
+                      if (!isNaN(idx) && idx >= 0) {
+                        if (selectedRoute === 'route1' && stopsRoute1[idx]) displayName = stopsRoute1[idx];
+                        else if (selectedRoute === 'route2' && stopsRoute2[idx]) displayName = stopsRoute2[idx];
+                        else if (stopsRoute1[idx]) displayName = stopsRoute1[idx];
+                        else if (stopsRoute2[idx]) displayName = stopsRoute2[idx];
+                      }
+                      return (
+                        <div
+                          key={station._id}
+                          className="stationItem flex items-center justify-between pl-3 py-1 border-b border-gray-200 cursor-pointer"
+                          onClick={() => handleStationClick(station)}
+                        >
+                          <span className="text-black">{displayName}</span>
+                        </div>
+                      );
+                    })}
                   </div>
                   <button
                     className="mt-4 bg-gray-500 text-white px-4 py-2 rounded-lg"
@@ -364,7 +319,6 @@ const InfoDialog: React.FC<{
               </div>
             )}
           </div>
-        </div>
       </div>
     </>
   );

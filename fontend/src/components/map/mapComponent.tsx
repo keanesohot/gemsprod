@@ -17,6 +17,7 @@ import { Polylines } from "../../interfaces/polylines.interface";
 import { Stations } from "../../interfaces/station.interface";
 import { BusData, BusInfo } from "../../interfaces/bus.interface";
 import { useTranslation } from "react-i18next";
+import userIcon from '/userIcon.png';
 const MAPID = import.meta.env.VITE_MAPID || "";
 const MAPAPIKEY = import.meta.env.VITE_GOOGLE_MAPS_API_KEY || "";
 const busIcon = (direction: number) => {
@@ -46,9 +47,8 @@ const busIcon = (direction: number) => {
 //     // anchor: new window.google.maps.Point(15, 30) // Adjust anchor point as needed
 //   };
 // };
-const userIcon = "/userIcon.png";
 
-console.log(MAPAPIKEY);
+// API Key loaded
 interface TrackerData {
   _id: string;
   server_time: string;
@@ -86,6 +86,7 @@ const MapComponant: React.FC<{
     lng: number;
   } | null;
   setLoading: React.Dispatch<React.SetStateAction<boolean>>;
+  userInfo?: { picture?: string } | null;
 }> = ({
   setLoading,
   polylines,
@@ -98,6 +99,7 @@ const MapComponant: React.FC<{
   setCenter,
   setShouldResetCenter,
   shouldResetCenter,
+  userInfo,
 }) => {
   ///////////// test polyline component ///////////////////////
   const PolylineComponent: React.FC<{
@@ -129,6 +131,19 @@ const MapComponant: React.FC<{
   //////////////////////////////////////////////////////////////
 
 const {t} = useTranslation();  
+  // ดึง array ชื่อสถานีจาก i18n
+  const stopsRoute1 = t('navbar.lineInfo.route1', { returnObjects: true }) as string[];
+  const stopsRoute2 = t('navbar.lineInfo.route2', { returnObjects: true }) as string[];
+  function getStationName(stationString: string) {
+    // สมมติ stationString = "สถานีที่ 15 - จุดศูนย์จีน ขาออก"
+    const match = stationString && stationString.match(/สถานีที่\s*(\d+)/);
+    if (match) {
+      const idx = Number(match[1]) - 1;
+      if (selectedRoute === "route1" && stopsRoute1[idx]) return stopsRoute1[idx];
+      if (selectedRoute === "route2" && stopsRoute2[idx]) return stopsRoute2[idx];
+    }
+    return stationString; // fallback
+  }
 
   // รับข้อมูลจาก websocket  ================================================
   const { messages } = useWebSocketData() as {
@@ -157,7 +172,6 @@ const {t} = useTranslation();
   const handleMarkerClick = useCallback(
     (key: string, value: TrackerData) => {
       const [lat, lng] = value.position.split(",").map(Number);
-      console.log(`Marker ${key} clicked`, value);
       setSelectedMarker({ key, value });
       setCenter({ lat, lng });
       setShouldResetCenter(true);
@@ -202,6 +216,62 @@ const {t} = useTranslation();
     updatePolylinePath(selectedRoute || "");
   }, [selectedRoute, updatePolylinePath, setLoading]);
 
+  // Utility to create a circular image from a given URL
+  function createCircularIcon(url: string, size: number = 40): Promise<string> {
+    return new Promise((resolve) => {
+      const img = new window.Image();
+      img.crossOrigin = 'anonymous';
+      img.onload = function () {
+        const canvas = document.createElement('canvas');
+        canvas.width = size;
+        canvas.height = size;
+        const ctx = canvas.getContext('2d');
+        if (ctx) {
+          ctx.clearRect(0, 0, size, size);
+          ctx.save();
+          ctx.beginPath();
+          ctx.arc(size / 2, size / 2, size / 2, 0, Math.PI * 2, true);
+          ctx.closePath();
+          ctx.clip();
+          ctx.drawImage(img, 0, 0, size, size);
+          ctx.restore();
+          resolve(canvas.toDataURL());
+        } else {
+          resolve(url); // fallback
+        }
+      };
+      img.onerror = function () {
+        // fallback: use circular default icon
+        if (url !== userIcon) {
+          createCircularIcon(userIcon, size).then(resolve);
+        } else {
+          resolve(url);
+        }
+      };
+      img.src = url;
+    });
+  }
+
+  const [userMarkerIcon, setUserMarkerIcon] = useState(userInfo?.picture || userIcon);
+  const [circularUserMarkerIcon, setCircularUserMarkerIcon] = useState(userMarkerIcon);
+
+  useEffect(() => {
+    setUserMarkerIcon(userInfo?.picture || userIcon);
+  }, [userInfo]);
+
+  // Preload the image and fallback if error
+  useEffect(() => {
+    if (!userInfo?.picture) return;
+    const img = new window.Image();
+    img.src = userInfo.picture;
+    img.onerror = () => setUserMarkerIcon(userIcon);
+  }, [userInfo]);
+
+  // Create circular icon whenever userMarkerIcon changes
+  useEffect(() => {
+    createCircularIcon(userMarkerIcon, 40).then(setCircularUserMarkerIcon);
+  }, [userMarkerIcon]);
+
   const userMarker = useMemo(() => {
     if (
       location &&
@@ -221,15 +291,15 @@ const {t} = useTranslation();
               setIsOpen(true);
             }}
             icon={{
-              url: userIcon,
+              url: circularUserMarkerIcon,
               scaledSize: window.google.maps.Size
-                ? new window.google.maps.Size(22, 20)
+                ? new window.google.maps.Size(40, 40)
                 : null,
               origin: window.google.maps.Point
                 ? new window.google.maps.Point(0, 0)
                 : null,
               anchor: window.google.maps.Point
-                ? new window.google.maps.Point(11, 10)
+                ? new window.google.maps.Point(20, 20)
                 : null,
             }}
           />
@@ -237,14 +307,14 @@ const {t} = useTranslation();
             <InfoWindow
               position={{ lat: location.lat, lng: location.lng }}
               onCloseClick={() => setIsOpen(false)}
-              headerContent={`คุณอยู่ตรงนี้`}
+              headerContent={t('navbar.busMarker.currentLocation')}
             ></InfoWindow>
           )}
         </>
       );
     }
     return null;
-  }, [location, isOpen, setLoading]);
+  }, [location, isOpen, setLoading, circularUserMarkerIcon, t]);
 
   const [gemscarselected, setgemscarselected] = useState<BusData | null>(null);
 
@@ -304,10 +374,10 @@ const {t} = useTranslation();
                     <p>{t("navbar.busMarker.direction", { direction: value.direction })}</p>
                     <p>{t("navbar.busMarker.speed", { speed: value.speed })}</p>
                     <p>
-                      {t("navbar.busMarker.currentStation", { station: value.currentStation })}
+                      {t("navbar.busMarker.currentStation", { station: getStationName(value.currentStation) })}
                     </p>
                     <p>
-                      {t("navbar.busMarker.incomingStation", { station: value.incomingStation })}
+                      {t("navbar.busMarker.incomingStation", { station: getStationName(value.incomingStation) })}
                     </p>
                     {/* Uncomment and use below translations as needed */}
                     {/* <p>{t('incomingEta', { minutes: value.incomingEta })}</p> */}

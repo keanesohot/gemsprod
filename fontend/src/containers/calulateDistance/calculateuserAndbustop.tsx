@@ -79,25 +79,15 @@ function useNearestStation(
   const [cookie] = useCookies(["token"]);
   const [userInfo, setUserInfo] = useState<UserInfo | null>(null);
   useEffect(() => {
-    console.log("useEffect for fetching user info is running");
-  
     const fetchUserInfo = async () => {
-      console.log("fetchUserInfo function started");
       try {
-        console.log("Attempting to fetch user info with token:", cookie.token);
         const info:any = await getUserinfo(cookie.token);
-        console.log("User info fetched successfully:", info);
         setUserInfo(info);
-        console.log("User info set in state");
       } catch (error) {
         console.error("Error fetching user info:", error);
       }
     };
     fetchUserInfo(); 
-    console.log("useEffect cleanup");
-    return () => {
-      console.log("useEffect cleanup function called");
-    };
   }, [cookie.token]);
   // =======================================================
 
@@ -154,8 +144,7 @@ function useNearestStation(
           destinationMarker: selectedMarker?.value._id || "N/A",
           stationId: closestStation.stationId
         })
-        .then(async (response) => {
-          console.log("Activity posted successfully:", response.data);
+        .then(async () => {
           // add user to station
           return await axios.post(`${api}/addusertoStaion`, {
             id: closestStation.stationId,
@@ -166,8 +155,8 @@ function useNearestStation(
             headers: { "x-auth-token": cookie.token }
           });
         })
-        .then((response) => {
-          console.log('addusertoStaion', response.data);
+        .then(() => {
+          // User added to station successfully
         })
         .catch((error) => {
           console.error("Error:", error);

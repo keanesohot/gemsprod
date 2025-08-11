@@ -5,7 +5,6 @@ import 'animate.css';
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import settingIcon from "/Settingicon.png";
-import languageIcon from "/languageicon.png";
 
 // export const [activeContent, setActiveContent] = useState(null);
 
@@ -16,6 +15,7 @@ const Navbar: React.FC<{
   setsettingIsVisible: React.Dispatch<React.SetStateAction<boolean>>;
 }> = ({ setsettingIsVisible,activeContent, setActiveContent, setinfoIsVisible }) => {
   const [isAnimating, setIsAnimating] = useState(true);
+  const [isOpen, setIsOpen] = useState(true);
 
 
   const handleLogoClick = () => {
@@ -43,57 +43,114 @@ const Navbar: React.FC<{
   
 
   return (
-    <nav
-      className={`navbar fixed bottom-5 left-1 right-0 z-50 ${
-        isAnimating ? "" : "navbar-close"
-      }`}
-    >
-      <div className="px-10 flex items-center h-14 navbar-wrapper ">
-        <div
-          className={`content ${
-            activeContent === "content1" ? "selected" : ""
-          }`}
-          onClick={() => toggleVisibilitySetting()}
+    <>
+      {/* Toggle Bar */}
+      <div
+        style={{
+          width: '100vw',
+          position: 'fixed',
+          left: 0,
+          right: 0,
+          bottom: isOpen ? 56 : 0, // 56px = navbar height
+          zIndex: 101,
+          background: 'var(--primaryColorLighter)',
+          color: 'white',
+          height: 32,
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          cursor: 'pointer',
+          transition: 'bottom 0.4s cubic-bezier(0.4,0,0.2,1)',
+        }}
+        onClick={() => setIsOpen((prev) => !prev)}
+        aria-label={isOpen ? 'Hide navbar' : 'Show navbar'}
+      >
+        <span
+          className="material-icons"
+          style={{
+            fontSize: 28,
+            transition: 'transform 0.3s',
+            color: 'black',
+            fontWeight: 700,
+            textShadow: '0 1px 2px rgba(0,0,0,0.18)',
+            WebkitFontSmoothing: 'antialiased',
+            MozOsxFontSmoothing: 'grayscale',
+            letterSpacing: '0.5px',
+          }}
         >
-          <img src={settingIcon} alt="setting" style={{ width: 32, height: 32 }} />
-        </div>
-        <div
-          className={`content ${
-            activeContent === "content2" ? "selected" : ""
-          }`}
-          onClick={() => toggleVisibility()}
-        >
-          <img src={languageIcon} alt="language" style={{ width: 32, height: 32 }} />
-        </div>
-  
-        <img
-          src={gemlogo}
-          alt="logo"
-          className={` logo w-20 ${isAnimating ? "spin" : ""}`}
-          onClick={handleLogoClick}
-        />
-        <div
-          className={`content  ${
-            activeContent === "route1" ? "selected" : ""
-          } `}
-          onClick={() => handleContentClick("route1")}
-        >
-         {t('navbar.route.route1')}
-        </div>
-        <div
-          className={`content  ${activeContent === "route2" ? "selected" : ""} `}
-          onClick={() => handleContentClick("route2")}
-        >
-          {t('navbar.route.route2')}
-        </div>
+          {isOpen ? 'expand_more' : 'expand_less'}
+        </span>
       </div>
-
- 
-
-    </nav>
-
+      <nav
+        className={`navbar fixed bottom-0 left-0 right-0 z-50 ${isOpen ? '' : 'navbar-closed'}`}
+        style={{
+          transform: isOpen ? 'translateY(0)' : 'translateY(100%)',
+          transition: 'transform 0.4s cubic-bezier(0.4,0,0.2,1)',
+        }}
+      >
+        <div className="px-10 flex items-center h-14 navbar-wrapper ">
+          <div
+            className={`content ${
+              activeContent === "content1" ? "selected" : ""
+            }`}
+            onClick={() => toggleVisibilitySetting()}
+          >
+            <div style={{
+              background: 'none',
+              borderRadius: '50%',
+              width: 40,
+              height: 40,
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              boxShadow: 'none'
+            }}>
+              <img src={settingIcon} alt="setting" style={{ width: 24, height: 24, filter: 'brightness(0) saturate(100%)', background: 'none' }} />
+            </div>
+          </div>
+          <div
+            className={`content ${
+              activeContent === "content2" ? "selected" : ""
+            }`}
+            onClick={() => toggleVisibility()}
+          >
+            <div style={{
+              background: 'none',
+              borderRadius: '50%',
+              width: 40,
+              height: 40,
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              boxShadow: 'none'
+            }}>
+              <span className="material-icons" style={{ color: 'black', fontSize: 32, background: 'none' }}>place</span>
+            </div>
+          </div>
     
-
+          <img
+            src={gemlogo}
+            alt="logo"
+            className={` logo w-20 ${isAnimating ? "spin" : ""}`}
+            onClick={handleLogoClick}
+          />
+          <div
+            className={`content  ${
+              activeContent === "route1" ? "selected" : ""
+            } `}
+            onClick={() => handleContentClick("route1")}
+          >
+           {t('navbar.route.route1')}
+          </div>
+          <div
+            className={`content  ${activeContent === "route2" ? "selected" : ""} `}
+            onClick={() => handleContentClick("route2")}
+          >
+            {t('navbar.route.route2')}
+          </div>
+        </div>
+      </nav>
+    </>
   );
 };
 

@@ -6,14 +6,13 @@ $animationcontentTime: 1.75s
 .navbar
   transition: $animationcontentTime
   background-color: $primaryColorLighter
-  border-radius: 8px
-  margin-left: 4px
-  margin-right: 4px
   .navbar-wrapper
     display: flex
     justify-content: space-between
     padding: 0 1rem
     transition: $animationcontentTime
+    flex-wrap: nowrap
+    overflow-x: auto
   .content
    display: flex
    align-items: center
@@ -71,5 +70,12 @@ $animationcontentTime: 1.75s
     transform: rotate(0deg)   
   to
     transform: $animationlogoDegree
+  
+@media (max-width: 430px)
+  .navbar-wrapper
+    padding: 0 0.25rem
+    min-width: 0
+    flex-wrap: nowrap
+    overflow-x: auto
   
 

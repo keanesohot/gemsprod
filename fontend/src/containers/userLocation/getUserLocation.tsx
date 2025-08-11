@@ -13,7 +13,7 @@ const useUserLocation = (): UserLocation | null => {
      
       const options = {
         enableHighAccuracy: true,
-        timeout: 1000,
+        timeout: 10000, // 10 วินาที
         maximumAge: 0
       };
 

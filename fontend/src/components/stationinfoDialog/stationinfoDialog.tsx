@@ -21,7 +21,7 @@ const InfostaionDialog: React.FC<{
     isVisible && (
 
       <div
-        className={`fixed top-4 right-4 text-center  z-50 flex justify-center info ${
+        className={`fixed top-4 left-4 text-center  z-50 flex justify-center info ${
           selectRoue === "route1" ? "info-route1" : "info-route2"
         } transition-all duration-300 ease-in-out ${
           isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-full"

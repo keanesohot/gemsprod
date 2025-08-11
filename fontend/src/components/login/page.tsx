@@ -21,11 +21,8 @@ const Login:React.FC<{}> = () => {
     try {
       // สำหรับ implicit flow, tokenResponse จะมี access_token
       const token = await sencodetobackend(tokenResponse.access_token, "https://shutter.mfu.ac.th");
-      console.log("Token received from backend:", token);
       // setCookie("token", token);
       Cookies.set("token", token);
-      console.log("Token set in cookies:", Cookies.get("token"));
-      console.log("All cookies:", document.cookie);
       // get role from user info
       const userInfo = await getUserinfo(token);
 
@@ -34,8 +31,6 @@ const Login:React.FC<{}> = () => {
         setLoading(false);
         return;
       }
-      
-      console.log("Role : ", userInfo.role);
       setLoading(false);
       switch (userInfo.role) {
         case "USER":
@@ -117,7 +112,7 @@ const Login:React.FC<{}> = () => {
         </div>
         <div className="md:col-start-2 row-start-2  md:justify-self-center self-center">
           <h1 className=" text-center mb-4 textcolor text-3xl font-bold ">
-            GEMS
+            SHUTTER MFU
           </h1>
           <img
             src={logo}

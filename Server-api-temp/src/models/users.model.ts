@@ -25,6 +25,10 @@ export const userSchema = new mongoose.Schema({
     ref: 'Role',
     type:String,
   },
+  picture: {
+    type: String,
+    required: false,
+  },
   addedAt: {
     required: false,
     type: Date,

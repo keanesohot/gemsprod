@@ -36,7 +36,7 @@ const ProtectloginRoute: React.FC<ProtectRouteProps> = ({ children = []}) => {
         if (!finished) {
           setIsLoading(false);
           // log for debug
-          console.log('setIsLoading(false) called in protectlogin');
+          // Loading completed
           finished = true;
         }
       }

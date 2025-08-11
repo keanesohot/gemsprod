@@ -22,41 +22,34 @@ import "animate.css";
 import Cookies from "js-cookie";
 import { useNavigate } from "react-router-dom";
 import { User } from "../../../interfaces/user.interface";
+import { useTranslation } from 'react-i18next';
 const Sidebar: React.FC<{ userInfo: User | null }> = ({ userInfo }) => {
   const [isOpen, setIsOpen] = useState(false);
   const navigate = useNavigate();
   const secondary = userInfo
     ? userInfo.email || "admin@email.com"
     : "admin@email.com";
-  console.log('role',userInfo?.role);
+  const { t } = useTranslation();
+  // User role logged
   const handleLogout = async () => {
     const { isConfirmed } = await Swal.fire({
-      title: "ออกจากระบบ!",
-      text: "คุณแน่ใจใช่ไหม?",
-      icon: "warning",
-      confirmButtonText: "ยืนยัน",
-      confirmButtonColor: "#8b090c",
+      title: t('navbar.logoutDialog.title'),
+      text: t('navbar.logoutDialog.text'),
+      icon: 'warning',
+      confirmButtonText: t('navbar.logoutDialog.confirm'),
+      confirmButtonColor: '#8b090c',
       showCancelButton: true,
-      cancelButtonText: "ยกเลิก",
-      cancelButtonColor: "#e2b644",
-      background: "#f9f4d4",
+      cancelButtonText: t('navbar.logoutDialog.cancel'),
+      cancelButtonColor: '#e2b644',
+      background: '#f9f4d4',
       reverseButtons: true,
       showClass: {
-        popup: `
-          animate__animated
-          animate__fadeInUp
-          animate__faster
-        `,
+        popup: `animate__animated animate__fadeInUp animate__faster`,
       },
       hideClass: {
-        popup: `
-          animate__animated
-          animate__fadeOutDown
-          animate__faster
-        `,
+        popup: `animate__animated animate__fadeOutDown animate__faster`,
       },
     });
-
     if (isConfirmed) {
       Cookies.remove("token");
       navigate("/", { replace: true });

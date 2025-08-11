@@ -50,14 +50,12 @@ const StationMarker: React.FC<{
   const handleMarkerClick = useCallback(
     (key: string, value: Stations) => {
       const [lat, lng] = value.position.split(",").map(Number);
-      console.log(`Marker ${key} clicked`, value);
       if (setSelectedMarker) {
         setSelectedMarker({ key, value });
       }
       setCenter({ lat, lng });
       // useCloseststation(value, busData, setClosestBus);
-      // console.log(`closestBus: ${closestBus?.busId} ${closestBus?.distance}`);
-      setStationSelected(value);
+              setStationSelected(value);
     },
     [
       setSelectedMarker,
@@ -88,13 +86,16 @@ const StationMarker: React.FC<{
   if (!position) return null;
 
   const { t } = useTranslation(); // Import the i18n configuration for language translation
+  // ดึง array ชื่อจุดจอดจาก i18n ตาม selectedRoute
+  // สมมติว่า position[index] ตรงกับ id-1 (หรือปรับ mapping ตามจริง)
+  const stopsRoute1 = t('navbar.lineInfo.route1', { returnObjects: true }) as string[];
+  const stopsRoute2 = t('navbar.lineInfo.route2', { returnObjects: true }) as string[];
 
   return (
     <>
       {position.map((station, index) => {
         if (station && station.position) {
-          // console.log(`station: ${station.id} ${station.position} ${station.statusBus?.busInfo.busId}`);
-          const [lat, lng] = station.position.split(",").map(Number);
+                  const [lat, lng] = station.position.split(",").map(Number);
           if (
             !isNaN(lat) &&
             !isNaN(lng) &&
@@ -135,7 +136,16 @@ const StationMarker: React.FC<{
                     onCloseClick={handleInfoWindowClose}
                     headerContent={t("navbar.stationMarker.infoWindowHeader", {
                       stationId: station.id,
-                      stationName: station.name,
+                      stationName: (() => {
+                        // พยายาม map id (string) -> index (number)
+                        const idx = Number(station.id) - 1;
+                        if (!isNaN(idx) && idx >= 0) {
+                          // ลองทั้งสองสาย ถ้าไม่เจอให้ fallback เป็น station.name
+                          if (stopsRoute1[idx]) return stopsRoute1[idx];
+                          if (stopsRoute2[idx]) return stopsRoute2[idx];
+                        }
+                        return station.name;
+                      })(),
                     })}
                     pixelOffset={[0, -45]}
                   >
@@ -170,8 +180,8 @@ const StationMarker: React.FC<{
               </React.Fragment>
             );
           } else {
-            console.log("window.google.maps not found...");
-          }
+                    // Google Maps not available
+      }
         }
         return null;
       })}

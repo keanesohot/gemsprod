@@ -4,9 +4,7 @@ import { User } from "../../interfaces/user.interface";
 const VITE_API = import.meta.env.VITE_API || "https://shutter.mfu.ac.th" 
 
 export const sencodetobackend = async (access_token: string, redirect_uri?: string) => {
-//   console.log("access_token : ", access_token);
   try {
-    console.log("Sending request to backend with access_token");
     const response = await axios.post(
       `${VITE_API}/users/signin`,
       {
@@ -16,7 +14,6 @@ export const sencodetobackend = async (access_token: string, redirect_uri?: stri
       },
       { headers: { "Access-Control-Allow-Origin": "*" } }
     );
-    console.log("Backend response:", response.data);
     return response.data;
   } catch (error) {
     console.error("Failed to send access token to backend:", error);
@@ -35,7 +32,6 @@ export const getUserinfo = async function (token?:string) {
           );
         // Backend ส่ง JWT token กลับมา ไม่ใช่ข้อมูล user โดยตรง
         const user = jwtDecode<User>(response.data);
-        console.log( new Date().getMilliseconds() ,user);
         if (!user) {
             return {"role":null}
         }
